@@ -282,7 +282,7 @@ export function StayFilter({ isOnViewPort }) {
               </button>
             );
           })}
-          <button
+          <div
             className="filter-btn open flex row"
             name="guest"
             onClick={onHandleClick}
@@ -298,7 +298,7 @@ export function StayFilter({ isOnViewPort }) {
               <SearchIcon />
               <span className="search-text">Search</span>
             </button>
-          </button>
+          </div>
 
           {isModalOpen && (
             <DynamicModalCmp

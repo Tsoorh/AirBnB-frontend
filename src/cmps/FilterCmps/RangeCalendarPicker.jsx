@@ -38,8 +38,8 @@ export function RangeCalendarPicker({ handleChange, onCloseModal }) {
   return (
     <Provider theme={defaultTheme} colorScheme="light" className="black-range-calendar-theme">
       <div className="modal-calendar-container border-radius" ref={wrapperRef}>
-        <div className="flex justify-center">
-          <I18nProvider locale="en-US">
+        <div className="flex justify-center border-radius">
+          <I18nProvider locale="en-US" dir="rtl" >
             <RangeCalendar
               aria-label="Trip dates"
               visibleMonths={2}
