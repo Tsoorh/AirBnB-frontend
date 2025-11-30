@@ -28,16 +28,18 @@ function remove(userId) {
 }
 
 async function update({ _id, score }) {
-	const user = await httpService.put(`user/${_id}`, { _id, score })
+	const user = await httpService.put(`user/`, { _id, score })
 
 	// When admin updates other user's details, do not update loggedinUser
-    const loggedinUser = getLoggedinUser() // Might not work because its defined in the main service???
-    if (loggedinUser._id === user._id) saveLoggedinUser(user)
+    // const loggedinUser = getLoggedinUser() // Might not work because its defined in the main service???
+    // if (loggedinUser._id === user._id) saveLoggedinUser(user)
 
 	return user
 }
 
 async function login(userCred) {
+	if(!userCred.credentials) userCred.credentials={...userCred};
+	
 	const user = await httpService.post('auth/login', userCred)
 	if (user) return saveLoggedinUser(user)
 }
