@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import SecurityIcon from '@mui/icons-material/Security'
 import StarIcon from '@mui/icons-material/Star'
+import AddIcon from '@mui/icons-material/Add'
+import { loadStays } from '../store/actions/stay.actions'
+import { StayPreview } from '../cmps/StayPreview'
 import '../assets/styles/pages/Dashboard.css'
 
 export function Dashboard() {
     const user = useSelector(storeState => storeState.userModule.user)
+    const stays = useSelector(storeState => storeState.stayModule.stays)
     const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState('about')
 
@@ -15,7 +18,14 @@ export function Dashboard() {
         if (!user) navigate('/')
     }, [user, navigate])
 
+    useEffect(() => {
+        loadStays()
+    }, [])
+
     if (!user) return <div>Loading...</div>
+
+    // Filter stays by current user's host ID
+    const userStays = stays.filter(stay => stay.host?._id === user._id)
 
     const tabs = [
         { id: 'about', label: 'About me', icon: null },
@@ -90,8 +100,28 @@ export function Dashboard() {
 
                     {activeTab === 'listings' && (
                         <div className="listings-section">
-                            <h2>My Listings</h2>
-                            <p>No listings yet.</p>
+                            <div className="section-header">
+                                <h2>My Listings</h2>
+                                <button 
+                                    className="btn-add-listing"
+                                    onClick={() => navigate('/dashboard/add-listing')}
+                                    title="Add new listing"
+                                >
+                                    <AddIcon />
+                                </button>
+                            </div>
+                            
+                            {userStays.length === 0 ? (
+                                <p className="empty-listings">No listings yet. Click the + button to add your first listing!</p>
+                            ) : (
+                                <div className="listings-grid">
+                                    {userStays.map(stay => (
+                                        <div key={stay._id} className="listing-card">
+                                            <StayPreview stay={stay} />
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
 

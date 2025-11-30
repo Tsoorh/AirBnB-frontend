@@ -15,6 +15,7 @@ import { HostDetails } from './pages/HostDetails'
 import { Order } from './pages/Order'
 import { StaySearch } from './pages/StaySearch'
 import { Dashboard } from './pages/Dashboard.jsx'
+import { StayEditPage } from './pages/StayEditPage'
 
 import { AppHeader } from './cmps/AppHeader'
 import { AppFooter } from './cmps/AppFooter'
@@ -45,6 +46,7 @@ export function RootCmp() {
                     <Route path="admin" element={<AdminIndex />} />
                     <Route path="search" element={<StaySearch />} />
                     <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="dashboard/add-listing" element={<StayEditPage />} />
                 </Routes>
             </main>
             <AppFooter />

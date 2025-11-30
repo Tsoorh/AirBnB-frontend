@@ -1,0 +1,12 @@
+.stay-edit-page {
+    min-height: 100vh;
+    background: #fafafa;
+    padding: 2rem 0;
+}
+
+@media (max-width: 768px) {
+    .stay-edit-page {
+        padding: 1rem 0;
+    }
+}
+

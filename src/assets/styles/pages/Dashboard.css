@@ -146,8 +146,8 @@
     border-radius: 8px;
     font-weight: 500;
     cursor: pointer;
-    text-decoration: underline;
     font-size: 0.9rem;
+    color: #000;
 }
 
 .btn-edit:hover {
@@ -177,6 +177,58 @@
 
 .reviews-written .icon-container {
     color: #222;
+}
+
+/* Listings Section */
+.listings-section {
+    width: 100%;
+}
+
+.btn-add-listing {
+    background: #222;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-add-listing:hover {
+    background: #000;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-add-listing svg {
+    font-size: 1.5rem;
+}
+
+.empty-listings {
+    color: #717171;
+    font-size: 1rem;
+    margin-top: 1rem;
+}
+
+.listings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.listing-card {
+    width: 100%;
+}
+
+.listing-card .stay-preview-link {
+    text-decoration: none;
+    color: inherit;
 }
 
 @media (max-width: 768px) {

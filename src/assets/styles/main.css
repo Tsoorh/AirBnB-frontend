@@ -40,3 +40,6 @@
 @import "cmps/review/ReviewList";
 @import "cmps/review/ReviewPreview";
 
+@import "cmps/StayEdit";
+@import "pages/StayEditPage";
+
