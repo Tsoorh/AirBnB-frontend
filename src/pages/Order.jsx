@@ -181,13 +181,13 @@ export function Order() {
                     ← 
                 </button>
                 <div className='order-steps'>
-                    <h1>Confirm and pay</h1>
+                    <h1>Request to book</h1>
                     <div className='step step-1'>
-                        <div>1.Log in or Sign up</div>
+                        <div>1. Log in or Sign up</div>
                         <button className='order-btn' onClick={openLoginModal}>Continue</button>
                     </div>
-                    <div className='step step-2'>2.Add a Payment method</div>
-                    <div className='step step-3'>3.Review your request</div>
+                    <div className='step step-2'>2. Add a Payment method</div>
+                    <div className='step step-3'>3. Review your request</div>
                 </div>
                 <div className='order-summary'>
                     <div className='order-stay'>
@@ -237,7 +237,7 @@ export function Order() {
                                 <p>{`${pets} pet${pets > 1 ? 's' : ''}`}</p>
                             )}       
                         </div>
-                        <button className='change-btn'>Change</button>
+                        <button className='change-btn' onClick={() => setIsGuestsModalOpen(true)}>Change</button>
                     </div>
                     <div className='order-price-details'>
                         <h2>Price details</h2>
@@ -264,12 +264,29 @@ export function Order() {
                 )}
 
                 {isCalendarModalOpen && (
-                    <div className="modal-overlay" onClick={() => setIsCalendarModalOpen(false)}>
-                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                    <div className="order-modal-overlay" onClick={() => setIsCalendarModalOpen(false)}>
+                        <div className="order-modal-content" onClick={(e) => e.stopPropagation()}>
+                            <button className="close-modal-btn" onClick={closeCalendarModal}>×</button>
+
+                            <h2>Change dates</h2>
                             <ChooseDates
                                 handleChange={handleDateChange}
                                 onCloseModal={() => setIsCalendarModalOpen(false)}
                             />
+                        </div>
+                    </div>
+                )} 
+                {isGuestsModalOpen && (
+                    <div className="order-modal-overlay" onClick={() => setIsGuestsModalOpen(false)}>
+                        <div className="order-modal-content" onClick={(e) => e.stopPropagation()}>
+                            <button className="close-modal-btn" onClick={() => setIsGuestsModalOpen(false)}>×</button>
+
+                            <h2>Change guests</h2>
+                            <GuestsPicker
+                                handleChange={handleGuestChange}
+                                onCloseModal={() => setIsGuestsModalOpen(false)}
+                            />
+                        <button className='save-btn' >Save</button>
                         </div>
                     </div>
                 )}

@@ -131,7 +131,7 @@
 }
 
 .host-login-btn {
-    background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);
+    background: var(--btn-color);
     color: white;
     border: none;
     border-radius: 8px;
@@ -143,6 +143,7 @@
 }
 
 .host-login-btn:hover {
+    background-color: var(--btn-color-hover);
     opacity: 0.9;
 }
 

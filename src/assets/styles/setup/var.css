@@ -14,6 +14,9 @@
   --gray3: #777;
   --gray4: #333;
 
+  --btn-color: linear-gradient(to right, #E61E4D 0%, #E31C5F 50%, #D70466 100%);
+  --btn-color-hover: linear-gradient(to right, #E61E4D 50%, #E31C5F 100%, #D70466 100%);
+
 
   --success: rgb(41, 189, 73);
   --error: rgb(216, 59, 59);

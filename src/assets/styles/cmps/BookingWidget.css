@@ -153,7 +153,7 @@
 .reserve-button {
   width: 100%;
   padding: 14px 24px;
-  background: linear-gradient(to right, #E61E4D 0%, #D70466 100%);
+  background: var(--btn-color);
   color: white;
   border: none;
   border-radius: 100px;
@@ -165,6 +165,7 @@
 }
 
 .reserve-button:hover {
+  background-color: var(--btn-color-hover);
   opacity: 0.9;
 }
 

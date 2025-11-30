@@ -54,7 +54,7 @@ export function AppHeader() {
 		<div ref={observeRef}></div>
 		<header className="app-header full wrap ">
 				<Link to="/" className='logo not-mobile-item'>
-					<img src='public\img\airbnb-icon.svg' alt="Airbnb" /><span>airbnb</span>
+					<img src='/img/airbnb-icon.svg' alt="Airbnb" /><span>airbnb</span>
 				</Link>
 
 			{/* <div className='flex align-center'> */}
