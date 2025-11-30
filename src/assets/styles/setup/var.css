@@ -4,6 +4,7 @@
   --clr3: #574f7d;
   --clr4: #95adbe;
   --clr5: #dff0ea;
+  --clr6: #FF385C;
 
   --clr1-light: color-mix(in lab, var(--clr1), white 15%);
 
