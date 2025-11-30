@@ -2,19 +2,16 @@ import { httpService } from '../http.service'
 
 export const reviewService = {
 	add,
-	query,
-	remove,
+	update
 }
 
-function query(filterBy) { //irrelevant - getting it inside stay service 
-	var queryStr = !filterBy ? '' : `?name=${filterBy.name}&sort=anaAref`
-	return httpService.get(`review${queryStr}`)
+async function add(stayId,review) {
+	return await httpService.post(`review/${stayId}`,review )
 }
 
-async function remove(reviewId) { 
-	await httpService.delete(`review/${reviewId}`)
+async function update(reviewId) { 
+	return await httpService.delete(`review/${stayId}`,review)
 }
 
-async function add({ txt, aboutUserId }) {
-	return await httpService.post(`review`, { txt, aboutUserId })
-}
+
+ // remove review??  front+back is missing

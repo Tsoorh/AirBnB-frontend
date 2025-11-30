@@ -1,4 +1,4 @@
-import { httpService } from '../http.service'
+import { httpService } from '../http.service.js'
 
 const STORAGE_KEY_LOGGEDIN_USER = 'loggedinUser'
 
@@ -14,17 +14,16 @@ export const userService = {
     saveLoggedinUser,
 }
 
-function getUsers() {
-	return httpService.get(`user`)
+async function getUsers() {
+	return await httpService.get(`user`)
 }
 
 async function getById(userId) {
-	const user = await httpService.get(`user/${userId}`)
-	return user
+	return await httpService.get(`user/${userId}`)
 }
 
-function remove(userId) {
-	return httpService.delete(`user/${userId}`)
+async function remove(userId) {
+	return await httpService.delete(`user/${userId}`)
 }
 
 async function update(user) {
@@ -46,6 +45,8 @@ async function login(userCred) {
 }
 
 async function signup(userCred) {
+	if(!userCred.credentials) userCred.credentials={...userCred};
+
 	if (!userCred.imgUrl) userCred.imgUrl = 'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'
     const user = await httpService.post('auth/signup', userCred)
 	return saveLoggedinUser(user)
