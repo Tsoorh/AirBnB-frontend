@@ -1,5 +1,8 @@
 .modal-calendar-container{
     margin-top: 1rem;
+    background-color: rgb(255, 255, 255);
+    border-radius: 2rem;
+    padding: 1.5rem;
 }
 
 .calendar-container{
