@@ -6,7 +6,7 @@ import { getDefaultFilter } from "../services/stay";
 import { useSearchParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { SearchDestination } from "./FilterCmps/SearchDestination";
-import { ChooseDates } from "./FilterCmps/ChooseDates";
+// import { ChooseDates } from "./FilterCmps/ChooseDates";
 import { MobileDates } from "./FilterCmps/MobileDates";
 import { GuestsPicker } from "./FilterCmps/GuestsPicker";
 import { useNavigate } from "react-router";
@@ -147,11 +147,8 @@ export function StayFilter({ isOnViewPort }) {
   }
 
   function onSearchClick(ev) {
-    // Stop event from bubbling to parent button
     ev.stopPropagation();
     ev.preventDefault();
-
-    // Close all modals
     SetCurrentModalContent(null);
     setIsModalOpen(false);
 
@@ -293,7 +290,10 @@ export function StayFilter({ isOnViewPort }) {
             </div>
             <div
               className={`search-btn search-sml ${classModalOpen()}`}
-              onClick={onSearchClick}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSearchClick(e);
+              }}
             >
               <SearchIcon />
               <span className="search-text">Search</span>
