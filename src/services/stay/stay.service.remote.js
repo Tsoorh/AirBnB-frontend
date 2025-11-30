@@ -5,7 +5,7 @@ export const stayService = {
     getById,
     save,
     remove,
-    addStayMsg
+    // addStayMsg
 }
 
 async function query(filterBy = {         
