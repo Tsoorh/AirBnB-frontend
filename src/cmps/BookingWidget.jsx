@@ -84,24 +84,19 @@ export function BookingWidget() {
 
   return (
     <div className="booking-widget">
-      {/* Discount Banner */}
-      <div className="discount-banner">
-        This host is offering a discount
-      </div>
-
       {/* Price Section */}
       <div className="price-section">
         <div className="price-display">
           <span className="price-amount">₪{stay.price?.base}</span>
-          <span className="price-period">per night</span>
+          <span className="price-period"> per night</span>
         </div>
-        {stay.rating && (
+        {/* {stay.rating && (
           <div className="widget-rating">
             <span className="rating-stars">★</span>
             <span className="rating-number">{stay.rating.avg}</span>
             <span className="rating-count">({stay.rating.count})</span>
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Booking Form */}
@@ -110,14 +105,14 @@ export function BookingWidget() {
         <div className="check-in">
           <button className='booking-btn'>
             <label>CHECK-IN</label>
-            <span>{checkIn ? checkIn : 'Add date'}</span>
+            <span>{checkIn && checkIn !== 'null' ? checkIn : 'Add dates'}</span>
           </button>
         </div>
 
         <div className="check-out">
           <button className='booking-btn'>
             <label>CHECKOUT</label>
-            <span>{checkOut ? checkOut : 'Add date'}</span>
+            <span>{checkOut && checkOut !== 'null' ? checkOut : 'Add dates'}</span>
           </button>
         </div>
           {isCalendarModalOpen && (

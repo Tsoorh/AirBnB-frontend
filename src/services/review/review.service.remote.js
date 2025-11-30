@@ -6,12 +6,12 @@ export const reviewService = {
 	remove,
 }
 
-function query(filterBy) {
+function query(filterBy) { //irrelevant - getting it inside stay service 
 	var queryStr = !filterBy ? '' : `?name=${filterBy.name}&sort=anaAref`
 	return httpService.get(`review${queryStr}`)
 }
 
-async function remove(reviewId) {
+async function remove(reviewId) { 
 	await httpService.delete(`review/${reviewId}`)
 }
 

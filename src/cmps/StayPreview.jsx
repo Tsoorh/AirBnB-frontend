@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSearchParams } from "react-router-dom";
 
@@ -7,6 +7,7 @@ import { useSearchParams } from "react-router-dom";
 export function StayPreview({ stay }) {
     const price = stay.price?.base || 0
     const [searchParams] = useSearchParams()
+    const [isLiked, setIsLiked] = useState(false)
 
     
     // Generate consistent dates based on stay ID for demo purposes
@@ -27,7 +28,13 @@ export function StayPreview({ stay }) {
     const formatDate = (date) => {
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     }
-    
+
+    const handleHeartClick = (ev) => {
+        ev.preventDefault()
+        ev.stopPropagation()
+        setIsLiked(!isLiked)
+    }
+
     return (
         <Link to={`/stay/${stay._id}?${searchParams}`} className="stay-preview-link">
             <article className="stay-preview">
@@ -37,9 +44,9 @@ export function StayPreview({ stay }) {
                         alt={stay.name}
                         className="stay-image"
                     />
-                    <button className="heart-icon" type="button">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    <button className="heart-icon" type="button" onClick={handleHeartClick}>
+                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style={{display: 'block', fill: isLiked ? 'var(--clr6)' : 'rgba(0, 0, 0, 0.5)', height: '24px', width: '24px', stroke: 'white', strokeWidth: 2, overflow: 'visible'}}>
+                            <path d="m15.9998 28.6668c7.1667-4.8847 14.3334-10.8844 14.3334-18.1088 0-1.84951-.6993-3.69794-2.0988-5.10877-1.3996-1.4098-3.2332-2.11573-5.0679-2.11573-1.8336 0-3.6683.70593-5.0668 2.11573l-2.0999 2.11677-2.0988-2.11677c-1.3995-1.4098-3.2332-2.11573-5.06783-2.11573-1.83364 0-3.66831.70593-5.06683 2.11573-1.39955 1.41083-2.09984 3.25926-2.09984 5.10877 0 7.2244 7.16667 13.2241 14.3333 18.1088z"></path>
                         </svg>
                     </button>
                     {isGuestFavorite && (
@@ -55,8 +62,7 @@ export function StayPreview({ stay }) {
                 <div className="stay-info">
                     <h3 className="stay-title">{stay.name}</h3>
                     <p className="stay-dates">{formatDate(startDate)} - {formatDate(endDate)}</p>
-                    <div className="stay-price-rating">
-                        <span className="stay-price-bold">₪{totalPrice}</span> <span className="stay-price-normal">for {nights} night{nights > 1 ? 's' : ''}</span>
+                    <div className="stay-price-rating">₪{totalPrice} for {nights} night{nights > 1 ? 's' : ''}
                         {stay.rating?.avg && (
                             <span className="stay-rating">
                                 <span className="star">★</span>

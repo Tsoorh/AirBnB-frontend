@@ -48,7 +48,7 @@ export function AppHeader() {
 		<div ref={observeRef}></div>
 		<header className="app-header full wrap ">
 				<Link to="/" className='logo not-mobile-item'>
-					<img src='public\img\airbnb-icon.svg' alt="Airbnb" /><span>airbnb</span>
+					<img src='/img/airbnb-icon.svg' alt="Airbnb" /><span>airbnb</span>
 				</Link>
 
 				{location.pathname !== '/become-host' && location.pathname !== '/dashboard' && <StayFilter isOnViewPort={isOnViewPort} className='flex align-center'/>}

@@ -259,31 +259,27 @@ export function StayDetails() {
 
           <div className="stay-content">
             <section className="stay-overview">
+              {stay.host && (
+                <Link to={`/host/${stay.host._id}`} className="stay-host-card">
+                  <div className="stay-host-avatar">
+                    <img src={hostAvatar} alt={`Host ${stay.host.fullname}`} />
+                  </div>
+                </Link>
+              )}
+
               <div className="overview-text">
                 <h2>{stay.host ? `Hosted by ${stay.host.fullname}` : 'Hosted by Airbnb Host'}</h2>
                 {stay.host?.isSuperhost && (
                   <span className="overview-superhost">Superhost</span>
                 )}
               </div>
-
-              {stay.host && (
-                <Link to={`/host/${stay.host._id}`} className="stay-host-card">
-                  <div className="stay-host-avatar">
-                    <img src={hostAvatar} alt={`Host ${stay.host.fullname}`} />
-                  </div>
-                  <div className="stay-host-text">
-                    <span className="stay-host-name">{stay.host.fullname}</span>
-                    {stay.host.isSuperhost && <span className="superhost-badge">Superhost</span>}
-                  </div>
-                </Link>
-              )}
             </section>
 
             {stay.labels?.length > 0 && (
               <section className="stay-highlights">
                 {stay.labels.map(label => (
                   <div key={label} className="stay-highlight-item">
-                    <div className="highlight-icon-circle" aria-hidden="true">{'\u2605'}</div>
+                    {/* <div className="highlight-icon-circle" aria-hidden="true">{'\u2605'}</div> */}
                     <div className="highlight-copy">
                       <p className="highlight-title">{label}</p>
                       <p className="highlight-subtitle">Highly rated by recent guests.</p>
@@ -295,7 +291,6 @@ export function StayDetails() {
 
             {stay.summary && (
               <section className="stay-description">
-                <h3>About this place</h3>
                 <p>{displayedDescription}</p>
                 {shouldTruncateDescription && (
                   <button
@@ -332,23 +327,19 @@ export function StayDetails() {
 
             <section className="stay-date-selection">
               <div className="date-selection-header">
-                <h3>Select check-in date</h3>
-                <p className="date-selection-subtitle">Add your travel dates for exact pricing</p>
+                <h3>
+                 {(checkInParam && checkOutParam && nights > 0)
+                   ? `${nights} ${nights === 1 ? 'night' : 'nights'} in ${locationLabel || 'this location'}`
+                    : 'Select check-in date'
+                 }
+                </h3>
+                <p className="date-selection-subtitle">
+                  {(checkInParam && checkOutParam) ? (
+                     ` ${formatDateDisplay(checkInParam)} - ${formatDateDisplay(checkOutParam)}`
+                  ) : 'Add your travel dates for exact pricing'}
+                  </p>
               </div>
-              {(checkInParam || checkOutParam) && (
-                <div className="date-selection-summary">
-                  {nights > 0 ? (
-                    <p>{nights} {nights === 1 ? 'night' : 'nights'} in {locationLabel || 'this location'}</p>
-                  ) : (
-                    <p>Select dates</p>
-                  )}
-                  {(checkInParam && checkOutParam) && (
-                    <p className="date-range">
-                      {formatDateDisplay(checkInParam)} - {formatDateDisplay(checkOutParam)}
-                    </p>
-                  )}
-                </div>
-              )}
+
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <div className="date-calendars-container">
                   <div className="date-calendar-wrapper">
@@ -360,7 +351,7 @@ export function StayDetails() {
                       disablePast
                       shouldDisableDate={(date) => date?.isValid() && isDateUnavailable(date)}
                       onMonthChange={handleLeftMonthChange}
-                      defaultCalendarMonth={leftMonth}
+                      referenceDate={leftMonth}
                     />
                   </div>
                   <div className="date-calendar-wrapper">
@@ -372,7 +363,7 @@ export function StayDetails() {
                       disablePast
                       shouldDisableDate={(date) => date?.isValid() && isDateUnavailable(date)}
                       onMonthChange={handleRightMonthChange}
-                      defaultCalendarMonth={rightMonth}
+                      referenceDate={rightMonth}
                     />
                   </div>
                 </div>
@@ -392,7 +383,6 @@ export function StayDetails() {
 
       <section className="stay-reviews" ref={reviewsSectionRef}>
         <div className="reviews-header">
-          <h2>Guest reviews</h2>
           {formattedRating && ratingCount && (
             <div className="reviews-summary">
               <span className="reviews-star" aria-hidden="true">{'\u2605'}</span>
@@ -422,7 +412,7 @@ export function StayDetails() {
                 <iframe
                   src={`https://www.openstreetmap.org/export/embed.html?bbox=${stay.loc.lng - 0.01},${stay.loc.lat - 0.01},${stay.loc.lng + 0.01},${stay.loc.lat + 0.01}&layer=mapnik&marker=${stay.loc.lat},${stay.loc.lng}`}
                   width="100%"
-                  height="320"
+                  height="400"
                   style={{ border: 0 }}
                   title={`Map of ${stay.loc.address}`}
                   loading="lazy"
@@ -430,9 +420,6 @@ export function StayDetails() {
                 ></iframe>
               </div>
             )}
-            <button type="button" className="link-button link-button--inline">
-              Show more
-            </button>
           </div>
         </section>
       )}

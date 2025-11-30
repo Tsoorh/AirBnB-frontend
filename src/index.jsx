@@ -14,7 +14,7 @@ import './assets/styles/main.css'
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
 	<Provider store={store}>
-		<Router>
+		<Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
 			<RootCmp />
 		</Router>
 	</Provider>
