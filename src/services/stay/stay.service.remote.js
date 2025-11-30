@@ -8,28 +8,45 @@ export const stayService = {
     addStayMsg
 }
 
-async function query(filterBy = { txt: '', minSpeed: 0 }) {
-    return httpService.get(`Stay`, filterBy)
+async function query(filterBy = {         
+        txt: '',
+        city: '',
+        labels: [],
+        minPrice: 70,
+        maxPrice: 3000,
+        dates: {
+            checkIn: null,
+            checkOut: null
+        },
+        guests: {
+            adults: 0,
+            children: 0,
+            infants: 0,
+            pets: 0,
+        }
+    }) 
+    {
+    return httpService.get(`stay`, filterBy)
 }
 
 function getById(stayId) {
-    return httpService.get(`Stay/${stayId}`)
+    return httpService.get(`stay/${stayId}`)
 }
 
 async function remove(stayId) {
-    return httpService.delete(`Stay/${stayId}`)
+    return httpService.delete(`stay/${stayId}`)
 }
-async function save(Stay) {
+async function save(stay) {
     var savedStay
-    if (Stay._id) {
-        savedStay = await httpService.put(`Stay/${Stay._id}`, Stay)
+    if (stay._id) {
+        savedStay = await httpService.put(`stay/${stay._id}`, stay)
     } else {
-        savedStay = await httpService.post('Stay', Stay)
+        savedStay = await httpService.post('stay', stay)
     }
     return savedStay
 }
 
 async function addStayMsg(stayId, txt) {
-    const savedMsg = await httpService.post(`Stay/${stayId}/msg`, {txt})
+    const savedMsg = await httpService.post(`stay/${stayId}/msg`, {txt})
     return savedMsg
 }
