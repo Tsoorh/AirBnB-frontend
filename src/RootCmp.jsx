@@ -14,13 +14,11 @@ import { UserDetails } from './pages/UserDetails'
 import { HostDetails } from './pages/HostDetails'
 import { Order } from './pages/Order'
 import { StaySearch } from './pages/StaySearch'
-import { BecomeHost } from './pages/BecomeHost.jsx'
+import { Dashboard } from './pages/Dashboard.jsx'
 
 import { AppHeader } from './cmps/AppHeader'
 import { AppFooter } from './cmps/AppFooter'
 import { UserMsg } from './cmps/UserMsg.jsx'
-// import { LoginSignupModal } from './cmps/LoginSignupModal.jsx'
-// import { LoginSignup, Login, Signup } from './pages/LoginSignup.jsx'
 
 
 export function RootCmp() {
@@ -46,12 +44,7 @@ export function RootCmp() {
                     <Route path="stay/:stayId/order" element={<Order />} />
                     <Route path="admin" element={<AdminIndex />} />
                     <Route path="search" element={<StaySearch />} />
-                    <Route path="become-host" element={<BecomeHost />} />
-                    {/* <Route path="auth" element={<LoginSignupModal />} /> */}
-                    {/* <Route path="auth" element={<LoginSignupModal />}>
-                        <Route path="login" element={<Login />} />
-                        <Route path="signup" element={<Signup />} />
-                    </Route> */}
+                    <Route path="dashboard" element={<Dashboard />} />
                 </Routes>
             </main>
             <AppFooter />

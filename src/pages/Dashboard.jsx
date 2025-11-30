@@ -1,0 +1,115 @@
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import SecurityIcon from '@mui/icons-material/Security'
+import StarIcon from '@mui/icons-material/Star'
+import '../assets/styles/pages/Dashboard.css'
+
+export function Dashboard() {
+    const user = useSelector(storeState => storeState.userModule.user)
+    const navigate = useNavigate()
+    const [activeTab, setActiveTab] = useState('about')
+
+    useEffect(() => {
+        if (!user) navigate('/')
+    }, [user, navigate])
+
+    if (!user) return <div>Loading...</div>
+
+    const tabs = [
+        { id: 'about', label: 'About me', icon: null },
+        { id: 'trips', label: 'My Trips', icon: null },
+        { id: 'listings', label: 'My Listings', icon: null },
+        { id: 'reservations', label: 'Reservations', icon: null },
+        { id: 'stats', label: 'Statistics', icon: null },
+    ]
+
+    return (
+        <div className="dashboard-page main-container">
+            <h1 className="dashboard-title">Profile</h1>
+            
+            <div className="dashboard-container">
+                <aside className="dashboard-sidebar">
+                    <div className="sidebar-card profile-card">
+                        <div className="profile-image-container">
+                            {user.imgUrl ? (
+                                <img src={user.imgUrl} alt={user.fullname} className="profile-image" />
+                            ) : (
+                                <div className="profile-placeholder">{user.fullname[0]}</div>
+                            )}
+                            <div className="badge-icon">
+                                <SecurityIcon />
+                            </div>
+                        </div>
+                        <h2 className="profile-name">{user.fullname}</h2>
+                        <p className="profile-status">Guest</p>
+                    </div>
+
+                    <nav className="dashboard-nav">
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.id}
+                                className={`nav-item ${activeTab === tab.id ? 'active' : ''}`}
+                                onClick={() => setActiveTab(tab.id)}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </nav>
+                </aside>
+
+                <main className="dashboard-content">
+                    {activeTab === 'about' && (
+                        <div className="about-section">
+                            <div className="section-header">
+                                <h2>About me</h2>
+                                <button className="btn-edit">Edit</button>
+                            </div>
+                            
+                            <div className="identity-verification">
+                                <SecurityIcon className="icon" />
+                                <span>Identity verified</span>
+                            </div>
+
+                            <div className="reviews-written">
+                                <div className="icon-container">
+                                    <StarIcon />
+                                </div>
+                                <span>0 Reviews I've written</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'trips' && (
+                        <div className="trips-section">
+                            <h2>My Trips</h2>
+                            <p>No trips booked... yet!</p>
+                        </div>
+                    )}
+
+                    {activeTab === 'listings' && (
+                        <div className="listings-section">
+                            <h2>My Listings</h2>
+                            <p>No listings yet.</p>
+                        </div>
+                    )}
+
+                    {activeTab === 'reservations' && (
+                        <div className="reservations-section">
+                            <h2>Reservations</h2>
+                            <p>No reservations yet.</p>
+                        </div>
+                    )}
+
+                    {activeTab === 'stats' && (
+                        <div className="stats-section">
+                            <h2>Statistics</h2>
+                            <p>Coming soon...</p>
+                        </div>
+                    )}
+                </main>
+            </div>
+        </div>
+    )
+}

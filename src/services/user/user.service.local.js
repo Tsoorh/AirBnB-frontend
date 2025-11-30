@@ -87,7 +87,6 @@ async function _createAdmin() {
         imgUrl: 'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png',
         score: 10000,
     }
-
     const newUser = await storageService.post('user', userCred)
     console.log('newUser: ', newUser)
 }

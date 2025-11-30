@@ -19,12 +19,6 @@ export function AppHeader() {
 	const [isOnViewPort, observeRef] = useObserver();
 	const {width} = useWindowSize();
 
-	// Don't show header on become-host page
-	if (location.pathname === '/become-host') {
-		return null
-	}
-	
-
 	async function onLogout() {
 		try {
 			await logout()
@@ -57,15 +51,11 @@ export function AppHeader() {
 					<img src='public\img\airbnb-icon.svg' alt="Airbnb" /><span>airbnb</span>
 				</Link>
 
-			{/* <div className='flex align-center'> */}
-				{/* filter */}
-				<StayFilter isOnViewPort={isOnViewPort} className='flex align-center'/>
-			{/* </div> */}
+				{location.pathname !== '/become-host' && location.pathname !== '/dashboard' && <StayFilter isOnViewPort={isOnViewPort} className='flex align-center'/>}
 			
 			<div className='flex align-center not-mobile-item'>
-				<Link to="/become-host">Become a host</Link>
 				{ user && (
-					<button className='btn-account' >{`${user.fullname[0]}`}</button>
+					<button className='btn-account' onClick={() => navigate('/dashboard')}>{`${user.fullname[0]}`}</button>
 				)}
 				<button className='btn-menu' onClick={toggleMenu}><MenuIcon/></button>
 			</div>
@@ -93,12 +83,6 @@ export function AppHeader() {
 
 						<Link to="/help" onClick={toggleMenu}>Help Center</Link>
 						<hr />
-						<Link to="/become-host" onClick={toggleMenu}>
-							Become a host
-							<p>it's easy to start hosting and earn extra income.</p>
-						</Link>
-							{/* <Link to="/account" onClick={toggleMenu}>Account</Link> */}
-							<hr />
 							<Link to="" onClick={toggleMenu}>Refer a host</Link>
 							<Link to="" onClick={toggleMenu}>Find a co-host</Link>
 							<Link to="" onClick={toggleMenu}>Gift cards</Link>
