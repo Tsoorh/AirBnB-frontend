@@ -1,4 +1,4 @@
-import { httpService } from '../http.service'
+import { httpService } from '../http.service.js'
 
 const STORAGE_KEY_LOGGEDIN_USER = 'loggedinUser'
 
@@ -14,17 +14,16 @@ export const userService = {
     saveLoggedinUser,
 }
 
-function getUsers() {
-	return httpService.get(`user`)
+async function getUsers() {
+	return await httpService.get(`user`)
 }
 
 async function getById(userId) {
-	const user = await httpService.get(`user/${userId}`)
-	return user
+	return await httpService.get(`user/${userId}`)
 }
 
-function remove(userId) {
-	return httpService.delete(`user/${userId}`)
+async function remove(userId) {
+	return await httpService.delete(`user/${userId}`)
 }
 
 async function update({ _id, score }) {
@@ -38,13 +37,13 @@ async function update({ _id, score }) {
 }
 
 async function login(userCred) {
-	if(!userCred.credentials) userCred.credentials={...userCred};
-	
 	const user = await httpService.post('auth/login', userCred)
 	if (user) return saveLoggedinUser(user)
-}
+	}
 
 async function signup(userCred) {
+	if(!userCred.credentials) userCred.credentials={...userCred};
+
 	if (!userCred.imgUrl) userCred.imgUrl = 'https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png'
 	userCred.score = 10000
 
@@ -62,13 +61,13 @@ function getLoggedinUser() {
 }
 
 function saveLoggedinUser(user) {
-	user = { 
-        _id: user._id, 
-        fullname: user.fullname, 
-        imgUrl: user.imgUrl, 
-        score: user.score, 
-        isAdmin: user.isAdmin 
-    }
+	// user = { 
+    //     _id: user._id, 
+    //     fullname: user.fullname, 
+    //     imgUrl: user.imgUrl, 
+    //     score: user.score, 
+    //     isAdmin: user.isAdmin 
+    // }
 	sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
 	return user
 }
