@@ -4,6 +4,7 @@
 .dates{
     left: -5px;
     width: 780px;
+    overflow: hidden;
 }
 .guest{
     right: -1px;

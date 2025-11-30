@@ -1,12 +1,12 @@
 
-@import "setup/var";
-@import "setup/typography";
+@import "setup/var.css";
+@import "setup/typography.css";
 @import "setup/mq-StayFilter.css";
 
-@import "basics/helpers";
-@import "basics/layout";
-@import "basics/base";
-@import "basics/forms";
+@import "basics/helpers.css";
+@import "basics/layout.css";
+@import "basics/base.css";
+@import "basics/forms.css";
 
 @import "RootCmp";
 

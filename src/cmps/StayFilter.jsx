@@ -291,13 +291,13 @@ export function StayFilter({ isOnViewPort }) {
               <span className="btn-header">Who</span>
               <span className="light-color">{handleGuests()}</span>
             </div>
-            <button
+            <div
               className={`search-btn search-sml ${classModalOpen()}`}
               onClick={onSearchClick}
             >
               <SearchIcon />
               <span className="search-text">Search</span>
-            </button>
+            </div>
           </button>
 
           {isModalOpen && (
