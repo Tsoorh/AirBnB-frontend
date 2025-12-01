@@ -1,38 +1,85 @@
 import PropTypes from 'prop-types'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { useSearchParams } from "react-router-dom";
-
+import { useSearchParams } from "react-router-dom"
+import { useSelector } from 'react-redux'
+import { updateUser } from '../store/actions/user.actions'
+import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
+import { updateStay } from '../store/actions/stay.actions'
 
 export function StayPreview({ stay }) {
     const price = stay.price?.base || 0
     const [searchParams] = useSearchParams()
+    const loggedInUser = useSelector(storeState => storeState.userModule.user)
     const [isLiked, setIsLiked] = useState(false)
+    const { isGuestFavorite } = stay
 
-    
+    useEffect(() => {
+        if (loggedInUser && loggedInUser.liked) {
+            setIsLiked(loggedInUser.liked.includes(stay._id))
+        } else {
+            setIsLiked(false)
+        }
+    }, [loggedInUser, stay._id])
+
     // Generate consistent dates based on stay ID for demo purposes
-    const { startDate, endDate, nights, totalPrice, isGuestFavorite } = useMemo(() => {
+    const { startDate, endDate, nights, totalPrice } = useMemo(() => {
         const seed = stay._id?.charCodeAt(0) || 0
         const startDate = new Date()
         startDate.setDate(startDate.getDate() + (seed % 30))
         const endDate = new Date(startDate)
-        endDate.setDate(endDate.getDate() + ((seed % 5) + 1))
-        
+        endDate.setDate(endDate.getDate() + ((seed % 4) + 1))
         const nights = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24))
         const totalPrice = price * nights
-        const isGuestFavorite = (seed % 3) === 0
-        
-        return { startDate, endDate, nights, totalPrice, isGuestFavorite }
+
+        return { startDate, endDate, nights, totalPrice }
     }, [stay._id, price])
-    
+
     const formatDate = (date) => {
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     }
 
-    const handleHeartClick = (ev) => {
+    const handleHeartClick = async (ev) => {
         ev.preventDefault()
         ev.stopPropagation()
-        setIsLiked(!isLiked)
+        if (!loggedInUser) {
+            showErrorMsg('Please login to like stays')
+            return
+        }
+        try {
+            const newIsLiked = !isLiked
+            setIsLiked(newIsLiked)
+
+            const updatedUserLiked = newIsLiked
+                ? [...(loggedInUser.liked || []), stay._id]
+                : (loggedInUser.liked || []).filter(id => id !== stay._id)
+
+            const updatedUser = {
+                ...loggedInUser,
+                liked: updatedUserLiked
+            }
+
+            const updatedStayLikedBy = newIsLiked
+            ? [...(stay.likedByUserIds || []), loggedInUser._id]
+            : (stay.likedByUserIds || []).filter(id => id !== loggedInUser._id)
+
+            const updatedStay = {
+                ...stay,
+                likedByUserIds: updatedStayLikedBy
+            }
+
+            await Promise.all([
+                updateUser(updatedUser),
+                updateStay(updatedStay)
+            ])
+
+
+            showSuccessMsg(newIsLiked ? 'Added to favorites' : 'Removed from favorites')
+        } catch (err) {
+            setIsLiked(!isLiked)
+            showErrorMsg('Could not update favorites')
+            console.error('Error updating favorites:', err)
+        }
     }
 
     return (
@@ -91,6 +138,7 @@ StayPreview.propTypes = {
         }),
         rating: PropTypes.shape({
             avg: PropTypes.number
-        })
+        }),
+        likedByUserIds: PropTypes.arrayOf(PropTypes.string)
     }).isRequired
 }
