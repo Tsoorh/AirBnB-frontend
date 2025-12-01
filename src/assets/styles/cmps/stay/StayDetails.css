@@ -444,12 +444,12 @@
 .thing-column {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 5px;
 }
 
 .thing-column h4 {
   margin: 0;
-  font-size: 16px;
+  font-size: 0.85rem;
   font-weight: 600;
   color: #222222;
 }
@@ -460,9 +460,18 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  font-size: 16px;
-  color: #222222;
+  font-size: 0.85rem;
+  color: var(--gray3);
+}
+
+.thing-column div {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  color: var(--gray3);
 }
 
 .thing-column li {

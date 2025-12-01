@@ -73,7 +73,7 @@ export function StayDetails() {
     stay.capacity?.beds && `${stay.capacity.beds} ${stay.capacity.beds === 1 ? 'bed' : 'beds'}`,
     stay.capacity?.bathrooms && `${stay.capacity.bathrooms} ${stay.capacity.bathrooms === 1 ? 'bathroom' : 'bathrooms'}`
   ].filter(Boolean)
-  const checkOutTime = stay.checkOut?.by
+  // const checkOutTime = stay.checkOut?.by
   const hostAvatar = stay.host?.picture || (stay.host?.fullname 
     ? `https://i.pravatar.cc/120?u=${encodeURIComponent(stay.host.fullname)}` 
     : 'https://i.pravatar.cc/120')
@@ -97,23 +97,9 @@ export function StayDetails() {
   const descriptionPreview = stay.summary?.slice(0, 350)
   const shouldTruncateDescription = stay.summary && stay.summary.length > 350
   const displayedDescription = !shouldTruncateDescription || isDescriptionExpanded ? stay.summary : `${descriptionPreview}...`
-  // Format house rules for display
-  const houseRulesItems = [
-    stay.checkIn?.from ? `Check-in after ${stay.checkIn.from}` : null,
-    checkOutTime ? `Checkout before ${checkOutTime}` : null,
-    stay.capacity?.guests ? `${stay.capacity.guests} guests maximum` : null,
-    ...(stay.houseRules || [])
-  ].filter(Boolean)
   
-  const safetyItems = [
-    'Carbon monoxide alarm',
-    'Smoke alarm'
-  ]
+
   
-  const cancellationItems = [
-    'This reservation is non-refundable.',
-    "Review this host's full policy for details."
-  ]
 
   const handleShowReviews = () => {
     reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -342,11 +328,7 @@ const handleHeartClick = async (ev) => {
               <section className="stay-highlights">
                 {stay.labels.map(label => (
                   <div key={label} className="stay-highlight-item">
-                    {/* <div className="highlight-icon-circle" aria-hidden="true">{'\u2605'}</div> */}
-                    <div className="highlight-copy">
                       <p className="highlight-title">{label}</p>
-                      <p className="highlight-subtitle">Highly rated by recent guests.</p>
-                    </div>
                   </div>
                 ))}
               </section>
@@ -586,42 +568,33 @@ const handleHeartClick = async (ev) => {
         </section>
       )}
 
-      {(houseRulesItems.length || safetyItems.length || cancellationItems.length) > 0 && (
+      {(stay.houseRules.length || stay.safety.length || stay.cancellationPolicy.length) > 0 && (
         <section className="stay-things-to-know">
           <h2>Things to know</h2>
           <div className="things-grid">
             <div className="thing-column">
               <h4>House rules</h4>
               <ul>
-                {houseRulesItems.map((rule, idx) => (
+                <li>{`Check-in after ${stay.checkIn.from}`}</li>
+                <li>{`Check-in before ${stay.checkOut.by}`}</li>
+                {stay.houseRules.map((rule, idx) => (
                   <li key={idx}>{rule}</li>
                 ))}
               </ul>
-              <button type="button" className="link-button link-button--show-more">
-                Show more <span className="arrow">{'>'}</span>
-              </button>
             </div>
             <div className="thing-column">
               <h4>Safety & property</h4>
               <ul>
-                {safetyItems.map((item, idx) => (
+                {stay.safety.map((item, idx) => (
                   <li key={idx}>{item}</li>
                 ))}
               </ul>
-              <button type="button" className="link-button link-button--show-more">
-                Show more <span className="arrow">{'>'}</span>
-              </button>
             </div>
             <div className="thing-column">
               <h4>Cancellation policy</h4>
-              <ul>
-                {cancellationItems.map((item, idx) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
-              <button type="button" className="link-button link-button--show-more">
-                Show more <span className="arrow">{'>'}</span>
-              </button>
+              <div>
+                {stay.cancellationPolicy ? (stay.cancellationPolicy) : 'ask the host'}
+              </div>
             </div>
           </div>
         </section>
