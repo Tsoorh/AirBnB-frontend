@@ -9,16 +9,21 @@ import { AmenityIcon } from '../cmps/AmenityIcon'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
+import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
+import { updateUser } from '../store/actions/user.actions'
+import { updateStay } from '../store/actions/stay.actions'
 import dayjs from 'dayjs'
-import '../assets/styles/cmps/stay/StayDetails.css'
+// import '../assets/styles/cmps/stay/StayDetails.css'
 
 export function StayDetails() {
+  const loggedInUser = useSelector(storeState => storeState.userModule.user)
   const { stayId } = useParams()
   const stay = useSelector(storeState => storeState.stayModule.stay)
   const [searchParams, setSearchParams] = useSearchParams()
   const reviewsSectionRef = useRef(null)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const [isHostBioExpanded, setIsHostBioExpanded] = useState(false)
+  const [isLiked, setIsLiked] = useState(false)
   
   // Get dates from URL params and validate them
   const checkInParamRaw = searchParams.get('checkIn') || ''
@@ -42,13 +47,25 @@ export function StayDetails() {
     loadStay(stayId)
   }, [stayId])
 
+  // Sync isLiked state with user's liked array
+  useEffect(() => {
+    if (loggedInUser && stay) {
+      const liked = loggedInUser.liked?.includes(stay._id) || false
+      setIsLiked(liked)
+    } else {
+      setIsLiked(false)
+    }
+  }, [loggedInUser, stay])
+
   if (!stay) {
     return <div className="stay-details-loading">Loading...</div>
   }
 
   const ratingAvg = stay.rating?.avg
   const ratingCount = stay.rating?.count
-  const formattedRating = ratingAvg ? Number(ratingAvg).toFixed(2).replace(/\.0+$/, '').replace(/\.(\d)0$/, '.$1') : null
+  const formattedRating = ratingAvg 
+    ? Number(ratingAvg).toFixed(2).replace(/\.0+$/, '').replace(/\.(\d)0$/, '.$1')
+    : null
   const locationLabel = [stay.loc?.city, stay.loc?.country].filter(Boolean).join(', ')
   const capacityItems = [
     stay.capacity?.guests && `${stay.capacity.guests} ${stay.capacity.guests === 1 ? 'guest' : 'guests'}`,
@@ -57,9 +74,10 @@ export function StayDetails() {
     stay.capacity?.bathrooms && `${stay.capacity.bathrooms} ${stay.capacity.bathrooms === 1 ? 'bathroom' : 'bathrooms'}`
   ].filter(Boolean)
   const checkOutTime = stay.checkOut?.by
-  const hostAvatar = stay.host?.picture || (stay.host?.fullname ? `https://i.pravatar.cc/120?u=${encodeURIComponent(stay.host.fullname)}` : 'https://i.pravatar.cc/120')
+  const hostAvatar = stay.host?.picture || (stay.host?.fullname 
+    ? `https://i.pravatar.cc/120?u=${encodeURIComponent(stay.host.fullname)}` 
+    : 'https://i.pravatar.cc/120')
   
-  // Calculate years hosting from createdAt
   const yearsHosting = stay.createdAt ? Math.floor((Date.now() - stay.createdAt) / (1000 * 60 * 60 * 24 * 365)) : 0
   
   // Mock host biography (in real app, this would come from stay.host.bio)
@@ -196,6 +214,50 @@ export function StayDetails() {
     })
   }
 
+const handleHeartClick = async (ev) => {
+      ev.preventDefault()
+      ev.stopPropagation()
+      if (!loggedInUser) {
+          showErrorMsg('Please login to like stays')
+          return
+      }
+      try {
+          const newIsLiked = !isLiked
+          setIsLiked(newIsLiked)
+
+          const updatedUserLiked = newIsLiked
+              ? [...(loggedInUser.liked || []), stay._id]
+              : (loggedInUser.liked || []).filter(id => id !== stay._id)
+
+          const updatedUser = {
+              ...loggedInUser,
+              liked: updatedUserLiked
+          }
+
+          const updatedStayLikedBy = newIsLiked
+          ? [...(stay.likedByUserIds || []), loggedInUser._id]
+          : (stay.likedByUserIds || []).filter(id => id !== loggedInUser._id)
+
+          const updatedStay = {
+              ...stay,
+              likedByUserIds: updatedStayLikedBy
+          }
+
+          await Promise.all([
+              updateUser(updatedUser),
+              updateStay(updatedStay)
+          ])
+
+
+          showSuccessMsg(newIsLiked ? 'Added to favorites' : 'Removed from favorites')
+      } catch (err) {
+          setIsLiked(!isLiked)
+          showErrorMsg('Could not update favorites')
+          console.error('Error updating favorites:', err)
+      }
+  }
+  
+
   return (
     <div className="stay-details">
       <header className="stay-details-header">
@@ -212,11 +274,12 @@ export function StayDetails() {
             </svg>
             <span>Share</span>
           </button>
-          <button type="button" className="header-action-link">
-            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-              <path d="M12 21.35 10.55 20C5.4 15.36 2 12.27 2 8.5 2 5.42 4.42 3 7.5 3A4.49 4.49 0 0 1 12 5.09 4.49 4.49 0 0 1 16.5 3C19.58 3 22 5.42 22 8.5c0 3.77-3.4 6.86-8.55 11.54Z" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          <button type="button" className="header-action-link" onClick={handleHeartClick}>
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false" style={{ overflow: 'visible'}}>
+              <path d="M12 21.35 10.55 20C5.4 15.36 2 12.27 2 8.5 2 5.42 4.42 3 7.5 3A4.49 4.49 0 0 1 12 5.09 4.49 4.49 0 0 1 16.5 3C19.58 3 22 5.42 22 8.5c0 3.77-3.4 6.86-8.55 11.54Z" fill={isLiked ? 'var(--clr6)' : 'none'} color={isLiked ? 'var(--clr6)' : 'none'} stroke="currentColor" strokeWidth="1.5" />
             </svg>
-            <span>Save</span>
+            {isLiked ? 'Saved' : 'Save'}
+            {/* <span>Save</span> */}
           </button>
         </div>
       </header>
@@ -401,7 +464,7 @@ export function StayDetails() {
 
       {stay.loc && (
         <section className="stay-location">
-          <h2>Where you'll be</h2>
+          <h2>Where you&apos;ll be</h2>
           <div className="stay-location-content">
             <div className="stay-location-text">
               <p className="location-address">{stay.loc.address}</p>

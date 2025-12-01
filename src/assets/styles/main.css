@@ -24,6 +24,7 @@
 @import "cmps/stay/StayIndex";
 @import "cmps/stay/StayList";
 @import "cmps/stay/StayPreview";
+@import "cmps/stay/StayDetails";
 @import "cmps/stay/StayFilter";
 @import "cmps/stay/StayFilterModal";
 @import "cmps/stay/ChooseDate";
