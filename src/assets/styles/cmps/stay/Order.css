@@ -19,6 +19,8 @@
     width: 500px;
     font-size: 1.2rem;
     font-weight: 500;
+    transition: all 0.4s ease-in-out;
+    overflow: hidden;
 }
 
 .step-2, .step-3{
@@ -131,6 +133,19 @@
 
 .back-btn:hover {
     background: var(--gray0);
+}
+
+.next-btn{
+    background-color: #222;
+    padding: 15px 30px;
+    border-radius: 0.7rem;
+    margin-top: 20px;
+    align-self: flex-end;
+
+}
+
+.next-btn:hover{
+    background-color: #111; 
 }
 
 .order-stay-img{
@@ -249,5 +264,108 @@
     content: "Save";
 }
 
+.step-1-closed{
+    display:flex;
+    align-items: center;
+    border: 1px solid #d0d0d0;
+}
 
+/* Step Transition Animations */
+.step.expanded {
+    animation: expandStep 0.4s ease-in-out;
+}
 
+.step-2-expanded {
+    /* border: 1px solid #d0d0d0; */
+    box-shadow: 4px 4px 8px 4px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+}
+
+.order-review-summary {
+    animation: fadeIn 0.5s ease-in-out 0.2s both;
+}
+
+.order-review-summary h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.review-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+.review-item:last-of-type {
+    border-bottom: none;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+
+.review-status {
+    margin-top: 0rem;
+    padding-top: 1.5rem;
+    /* border-top: 2px solid #efefef; */
+}
+
+.review-status p {
+    color: #008A05;
+    font-weight: 400;
+    /* margin: 0.5rem 0; */
+    font-size: 1rem;
+}
+
+.review-step {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.review-item p {
+    margin: 0;
+    font-weight: 500;
+    font-size: 1rem;
+}
+.review-item span {
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+/* Animations */
+@keyframes expandStep {
+    from {
+        max-height: 60px;
+        opacity: 0.5;
+    }
+    to {
+        max-height: 1000px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Collapsed step styling */
+.step.collapsed {
+    animation: collapseStep 0.3s ease-in-out;
+}
+
+@keyframes collapseStep {
+    from {
+        max-height: 1000px;
+    }
+    to {
+        max-height: 60px;
+    }
+}

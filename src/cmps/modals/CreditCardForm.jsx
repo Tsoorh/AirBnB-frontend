@@ -60,6 +60,7 @@ export default function CreditCardForm({ saveOrder }) {
               type="text"
               className="zip-code"
               placeholder="ZIP code"
+              name="zipCode"
               value={address.zipCode}
               onChange={handleChangeAddress}
               required

@@ -4,12 +4,11 @@ import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import { orderService } from '../services/order'
 import { loadStay } from '../store/actions/stay.actions'
 import CreditCardForm from '../cmps/modals/CreditCardForm.jsx'
-import { addOrder } from '../store/actions/order.actions.js'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service.js'
 import { LoginSignupModal } from '../cmps/LoginSignupModal.jsx'
 import { ChooseDates } from '../cmps/FilterCmps/ChooseDates.jsx'
 import { GuestsPicker } from '../cmps/FilterCmps/GuestsPicker.jsx'
-
+import {addOrder} from '../store/actions/order.actions.js'
 
 export function Order() {
     const navigate = useNavigate()
@@ -18,6 +17,7 @@ export function Order() {
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
     const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false)
     const [isGuestsModalOpen, setIsGuestsModalOpen] = useState(false)
+    const [ isStepOne, setStepOne ] = useState(true)
 
     // const [card, setCard] = useState({cardNumber: '', expiration: '', cvv: '',zipCode: '', })
     const [order, setOrder] = useState(null)
@@ -77,11 +77,11 @@ export function Order() {
     useEffect(() => {
         if(stay && checkIn && checkOut) {
             const nights = calculateNights(checkIn, checkOut)
-            const pricePerNight = stay.price?.base || 0
+            const pricePerNight = Number(stay.price?.base) || 0
             const subtotal = nights * pricePerNight
             const serviceFee = subtotal * 0.14 // 14% service fee
-            const cleaningFee = stay.price?.cleaning || 0
-            const totalPrice = subtotal + serviceFee +cleaningFee
+            const cleaningFee = Number(stay.price?.cleaning) || 0
+            const totalPrice = subtotal + serviceFee + cleaningFee
 
             const newOrder = {
                 ...orderService.getEmptyOrder(),
@@ -125,9 +125,9 @@ export function Order() {
     async function addedOrderAfterPayment(){
         const updatedOrder = {
             ...order,
-            paymentStatus: 'paid'
+            status: 'pending',
+            paymentStatus: "paid",
         }
-
         setOrder(prevOrder => ({...prevOrder, ...updatedOrder}))
         try {
             await addOrder(updatedOrder)
@@ -162,8 +162,16 @@ export function Order() {
     function closeCalendarModal() {
         setIsCalendarModalOpen(false)
     }
-    
-    
+
+    async function handleNextStep() {
+        try {
+            await addedOrderAfterPayment()
+            setStepOne(false)
+        } catch (err) {
+            console.error('Failed to process payment:', err)
+        }
+    }
+
 
 
     if (!stay || !order) {
@@ -245,10 +253,10 @@ export function Order() {
                             <span>{`₪${order.priceBreakdown.pricePerNight} x ${order.nights} nights `}</span>
                             <span>{`₪${order.priceBreakdown.subtotal.toFixed(2)}`}</span>
                         </div>
-                        <div>
+                        {/* <div>
                             <span>Cleaning fee </span>
                             <span>{`₪${order.priceBreakdown.cleaningFee.toFixed(2)}`}</span>
-                        </div>
+                        </div> */}
                         <div>
                             <span>Service fee </span>
                             <span>{`₪${order.priceBreakdown.serviceFee.toFixed(2)}`}</span>
@@ -303,12 +311,51 @@ export function Order() {
                 </button>
                 <div className='order-steps'>
                     <h1>Confirm and pay</h1>
-                    <div className='step step-1 credit-card'>
-                        <p className='payment-step'>1.Add a Payment method</p>
-                        <p className='credit-or-debit'>💳 Credit or debit card</p>
-                        <CreditCardForm saveOrder={addedOrderAfterPayment}/>
-                    </div>
-                    <div className='step step-2'>2.Review your request</div>
+
+                    {/* Step 1: Payment */}
+                    {isStepOne ? (
+                        <div className='step step-1 credit-card'>
+                            <p className='payment-step'>1. Add a Payment method</p>
+                            <p className='credit-or-debit'>💳 Credit or debit card</p>
+                            <CreditCardForm saveOrder={addedOrderAfterPayment}/>
+                            <button className='next-btn' onClick={handleNextStep}>Next</button>
+                        </div>
+                    ) : (
+                        <div className='step step-1-closed'>
+                            <p className='payment-step'>1. Add a Payment method</p>
+                        </div>
+                    )}
+
+                    {/* Step 2: Review */}
+                    {isStepOne ? (
+                        <div className='step step-2'>2. Review your request</div>
+                    ) : (
+                        <div className='step step-2-expanded'>
+                            <p className='review-step'>2. Review your request</p>
+                            <div className='order-review-summary'>
+                                <div className='review-item'>
+                                    <p>Dates:</p>
+                                    <span>{formatDateRange(checkIn, checkOut)}</span>
+                                </div>
+                                <div className='review-item'>
+                                    <p>Guests:</p>
+                                    <span>{adults + children} guests</span>
+                                </div>
+                                <div className='review-item'>
+                                    <p>Nights:</p>
+                                    <span>{order.nights}</span>
+                                </div>
+                                <div className='review-item'>
+                                    <p>Total:</p>
+                                    <span>{`₪${order.priceBreakdown.total.toFixed(2)}`}</span>
+                                </div>
+                                <div className='review-status'>
+                                    <p>✓ Payment completed</p>
+                                    <p>✓ Order submitted - waiting for host approval</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
                 <div className='order-summary'>
                     <div className='order-stay'>

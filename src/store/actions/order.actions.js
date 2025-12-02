@@ -1,4 +1,4 @@
-import { orderService } from "../../services/order/order.service.local";
+import { orderService } from "../../services/order";
 import { makeId } from "../../services/util.service";
 import { SET_ORDERS, ADD_ORDER, REMOVE_ORDER, SET_ORDER, UPDATE_ORDER, UPDATE_ORDER_STATUS, ADD_ORDER_MSG } from "../reducers/order.reducer";
 import { store } from "../store";
