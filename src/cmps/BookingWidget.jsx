@@ -45,9 +45,21 @@ export function BookingWidget() {
     }
 
     function handleReserve(){
-      if(!checkIn || !checkOut) setIsCalendarModalOpen(true)
-      else if(adults + children == 0) setIsGuestsModalOpen(true)
-      else if (checkIn && checkOut && (adults+children) != 0) navigate(`/stay/${stay._id}/order?${searchParams.toString()}`)
+      const hasValidDates = checkIn && checkOut && checkIn !== 'null' && checkOut !== 'null'
+      const hasValidGuests = (adults + children) > 0
+
+      // Check dates first
+      if(!hasValidDates) {
+        setIsCalendarModalOpen(true)
+      }
+      // Then check guests
+      else if(!hasValidGuests) {
+        setIsGuestsModalOpen(true)
+      }
+      // If both are valid, navigate
+      else {
+        navigate(`/stay/${stay._id}/order?${searchParams.toString()}`)
+      }
     }
 
     
@@ -73,7 +85,6 @@ export function BookingWidget() {
     //     setSearchParams(newParams)
     // }
 
-  // Show loading state if stay is not loaded yet
   if (!stay) {
     return (
       <div className="booking-widget">

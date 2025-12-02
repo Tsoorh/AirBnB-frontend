@@ -1,14 +1,13 @@
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router'
 import { useSelector } from 'react-redux'
-import { useEffect, useState } from 'react'
+import {  useState } from 'react'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
 import { logout } from '../store/actions/user.actions'
 import { StayFilter } from './StayFilter'
 import MenuIcon from '@mui/icons-material/Menu';
 import { LoginSignupModal } from './LoginSignupModal';
 import { useObserver } from "../customHooks/useObserver";
-import { useWindowSize } from '../customHooks/useWindowSize'
 
 export function AppHeader() {
 	const location = useLocation()
@@ -17,7 +16,6 @@ export function AppHeader() {
 	const navigate = useNavigate()
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 	const [isOnViewPort, observeRef] = useObserver();
-	const {width} = useWindowSize();
 
 	async function onLogout() {
 		try {
@@ -51,7 +49,11 @@ export function AppHeader() {
 					<img src='/img/airbnb-icon.svg' alt="Airbnb" /><span>airbnb</span>
 				</Link>
 
-				{location.pathname !== '/become-host' && location.pathname !== '/dashboard' && <StayFilter isOnViewPort={isOnViewPort} className='flex align-center'/>}
+			{location.pathname !== '/become-host' &&
+				location.pathname !== '/dashboard' &&
+				!location.pathname.includes('/order') &&
+				<StayFilter isOnViewPort={isOnViewPort} className='flex align-center'/>
+			}
 			
 			<div className='flex align-center not-mobile-item'>
 				{ user && (

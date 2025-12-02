@@ -16,10 +16,10 @@
             max-height: 2.5rem;
         }
         & span{
-            font-size: 20px;
-            font-weight: 600;
+            font-size: 24px;
+            font-weight: 500;
             padding-left: 0.5rem;
-            color: #FF385C;
+            color: var(--clr6);
         }
     }
 
