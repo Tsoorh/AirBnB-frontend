@@ -40,14 +40,17 @@ export function ChooseDates({ handleChange, onCloseModal }) {
   };
 
   function getNextMonthAndDate() {
-    const date = new Date;
+    const date = new Date();
     const year = date.getFullYear();
-    console.log("🚀 ~ getNextMonthAndDate ~ year:", year)
-    const month = date.getMonth();
-    console.log("🚀 ~ getNextMonthAndDate ~ month:", month)
+    const month = date.getMonth(); // 0-11
 
-    if (month!==12) return (`${month+2}-1-${year}`)
-    return (`1-1-${year+1}`);
+    // Calculate next month
+    if (month !== 11) {
+      // Not December, just add 1 to month
+      return `${year}-${String(month + 2).padStart(2, '0')}-01`;
+    }
+    // December, roll over to next year
+    return `${year + 1}-01-01`;
   }
 
   return (

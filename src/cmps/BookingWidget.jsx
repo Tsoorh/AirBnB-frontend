@@ -90,13 +90,6 @@ export function BookingWidget() {
           <span className="price-amount">₪{stay.price?.base}</span>
           <span className="price-period"> per night</span>
         </div>
-        {/* {stay.rating && (
-          <div className="widget-rating">
-            <span className="rating-stars">★</span>
-            <span className="rating-number">{stay.rating.avg}</span>
-            <span className="rating-count">({stay.rating.count})</span>
-          </div>
-        )} */}
       </div>
 
       {/* Booking Form */}

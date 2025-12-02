@@ -12,8 +12,9 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
 import { updateUser } from '../store/actions/user.actions'
 import { updateStay } from '../store/actions/stay.actions'
+import { userService } from '../services/user'
 import dayjs from 'dayjs'
-// import '../assets/styles/cmps/stay/StayDetails.css'
+import '../assets/styles/cmps/stay/StayDetails.css'
 
 export function StayDetails() {
   const loggedInUser = useSelector(storeState => storeState.userModule.user)
@@ -24,6 +25,7 @@ export function StayDetails() {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const [isHostBioExpanded, setIsHostBioExpanded] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
+  const [hostDetails, setHostDetails] = useState(null)
   
   // Get dates from URL params and validate them
   const checkInParamRaw = searchParams.get('checkIn') || ''
@@ -57,14 +59,28 @@ export function StayDetails() {
     }
   }, [loggedInUser, stay])
 
+  // Fetch detailed host information
+  useEffect(() => {
+    async function fetchHostDetails() {
+      if (stay?.host?._id) {
+        try {
+          const host = await userService.getById(stay.host._id)
+          setHostDetails(host)
+        } catch (err) {
+          console.error('Failed to load host details:', err)
+        }
+      }
+    }
+    fetchHostDetails()
+  }, [stay?.host?._id])
+
   if (!stay) {
     return <div className="stay-details-loading">Loading...</div>
   }
 
-  const ratingAvg = stay.rating?.avg
-  const ratingCount = stay.rating?.count
-  const formattedRating = ratingAvg 
-    ? Number(ratingAvg).toFixed(2).replace(/\.0+$/, '').replace(/\.(\d)0$/, '.$1')
+
+  const formattedRating = stay.rating?.avg 
+    ? Number(stay.rating?.avg).toFixed(2).replace(/\.0+$/, '').replace(/\.(\d)0$/, '.$1')
     : null
   const locationLabel = [stay.loc?.city, stay.loc?.country].filter(Boolean).join(', ')
   const capacityItems = [
@@ -265,7 +281,6 @@ const handleHeartClick = async (ev) => {
               <path d="M12 21.35 10.55 20C5.4 15.36 2 12.27 2 8.5 2 5.42 4.42 3 7.5 3A4.49 4.49 0 0 1 12 5.09 4.49 4.49 0 0 1 16.5 3C19.58 3 22 5.42 22 8.5c0 3.77-3.4 6.86-8.55 11.54Z" fill={isLiked ? 'var(--clr6)' : 'none'} color={isLiked ? 'var(--clr6)' : 'none'} stroke="currentColor" strokeWidth="1.5" />
             </svg>
             {isLiked ? 'Saved' : 'Save'}
-            {/* <span>Save</span> */}
           </button>
         </div>
       </header>
@@ -294,14 +309,12 @@ const handleHeartClick = async (ev) => {
               <div className="stay-summary-rating">
                 <span className="summary-star" aria-hidden="true">{'\u2605'}</span>
                 <span className="summary-rating-value">{formattedRating}</span>
-                {ratingCount && (
-                  <>
                     <span className="summary-dot">{'\u00b7'}</span>
                     <button type="button" onClick={handleShowReviews}>
-                      {`${ratingCount} reviews`}
+                      {stay.reviews?.length
+                      ? `${stay.reviews.length} reviews`
+                      : 'Be the first to review'}
                     </button>
-                  </>
-                )}
               </div>
             )}
           </section>
@@ -428,12 +441,12 @@ const handleHeartClick = async (ev) => {
 
       <section className="stay-reviews" ref={reviewsSectionRef}>
         <div className="reviews-header">
-          {formattedRating && ratingCount && (
+          {formattedRating && stay.reviews && (
             <div className="reviews-summary">
               <span className="reviews-star" aria-hidden="true">{'\u2605'}</span>
               <span>{formattedRating}</span>
               <span className="reviews-dot">{'\u00b7'}</span>
-              <span>{ratingCount} reviews</span>
+              {stay.reviews?.length && <span>{stay.reviews.length} reviews</span>}
             </div>
           )}
         </div>
@@ -487,7 +500,7 @@ const handleHeartClick = async (ev) => {
                     </div>
                   )}
                   <div className="host-profile-stats">
-                    <span className="host-stat-reviews">{ratingCount || 0} Reviews</span>
+                    <span className="host-stat-reviews">{stay.reviews?.length || 0} Reviews</span>
                     <span className="host-stat-rating">
                       <span className="host-stat-star">★</span>
                       {formattedRating || '0'}
@@ -567,6 +580,44 @@ const handleHeartClick = async (ev) => {
           </div>
         </section>
       )}
+
+      {/* {hostDetails && (
+        <section className="stay-meet-host">
+
+          <div>
+            <h2>Meet your host</h2>
+            <Link to={`/host/${hostDetails._id}`} >
+              <div className='meet-host-card'>
+                <div >
+                  <img className='host-profile-avatar' src={hostAvatar} alt={`Host ${hostDetails.fullname}`} />
+                  <h2>{hostDetails.fullname}</h2>
+                  {hostDetails.isSuperHost && (
+                    <span className="overview-superhost">Superhost</span>
+                  )}
+                    <h2 className="rate-host">{stay.reviews?.length}</h2>
+                    <span>Reviews</span>
+                    <h2 className="rate-host">{stay.rating.avg}</h2>
+                    <span>rating</span>
+
+                </div>
+              </div>
+            </Link>
+          </div>
+
+
+
+
+        <div>
+          {hostDetails.isSuperHost && (
+            <div className="host-superhost-info">
+              <h4>{hostDetails.fullname} is a Superhost</h4>
+              <p>Superhosts are experienced, highly rated hosts who are committed to providing great stays for guests.</p>
+            </div>
+            )}
+        </div>
+        </section>
+
+      )} */}
 
       {(stay.houseRules.length || stay.safety.length || stay.cancellationPolicy.length) > 0 && (
         <section className="stay-things-to-know">

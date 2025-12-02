@@ -212,7 +212,7 @@
 }
 
 .overview-superhost {
-  margin-top: 8px;
+  /* margin-top: 8px; */
   font-size: 14px;
   font-weight: 400;
   color: var(--gray3);
@@ -550,6 +550,8 @@
 }
 
 .stay-meet-host {
+  display: flex;
+  gap: 30px;
   margin-top: 64px;
   border-top: 1px solid #dddddd;
   padding-top: 32px;
@@ -828,6 +830,16 @@
 .no-reviews {
   font-size: 16px;
   color: #717171;
+}
+
+.meet-host-card {
+  box-shadow: #0000001a 0px 1px 3px 0px, #0000000d 2px 2px 3px 2px;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.rate-host{
+  margin: 0;
 }
 
 @media (max-width: 1024px) {
