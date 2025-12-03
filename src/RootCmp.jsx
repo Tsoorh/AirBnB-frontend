@@ -20,6 +20,7 @@ import { StayEditPage } from './pages/StayEditPage'
 import { AppHeader } from './cmps/AppHeader'
 import { AppFooter } from './cmps/AppFooter'
 import { UserMsg } from './cmps/UserMsg.jsx'
+import { Wishlist } from './pages/Wishlist.jsx'
 
 
 export function RootCmp() {
@@ -38,6 +39,7 @@ export function RootCmp() {
                     <Route path="stay" element={<StayIndex />} />
                     <Route path="stay/:stayId" element={<StayDetails />} />
                     <Route path="stay/:stayId/photos" element={<PhotoTour />} />
+                    <Route path="wishlist" element={<Wishlist />} />
                     <Route path="host/:hostId" element={<HostDetails />} />
                     <Route path="user/:id" element={<UserDetails />} />
                     <Route path="review" element={<ReviewIndex />} />
