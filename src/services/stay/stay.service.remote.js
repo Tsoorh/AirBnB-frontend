@@ -26,6 +26,7 @@ async function query(filterBy = {
         }
     }) 
     {
+    // console.log('filterBy fron service:', filterBy);
     return httpService.get(`stay`, filterBy)
 }
 

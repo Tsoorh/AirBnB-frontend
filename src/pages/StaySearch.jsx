@@ -11,7 +11,7 @@ import { useZoomLevel } from '../customHooks/useZoomLevel'
 export function StaySearch(){
     const [searchParams] = useSearchParams()
     const stays = useSelector(storeState => storeState.stayModule.stays)
-    const zoomLevel = useZoomLevel()
+    const zoomLevel = useZoomLevel()    
     
     // Calculate responsive stay count based on zoom level
     const getStaysPerRow = () => {

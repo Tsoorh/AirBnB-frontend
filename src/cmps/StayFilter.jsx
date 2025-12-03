@@ -145,14 +145,22 @@ export function StayFilter({ isOnViewPort }) {
     if (setFilter) {
       setFilter(filter);
     }
+
+    // Refactor filter to flat object
+    const refactoredFilter = refactorFilter(filter);
+
     // Update URL search params (this will trigger filtering in parent component)
-    setSearchParams({ ...refactorFilter(filter) });
+    setSearchParams({ ...refactoredFilter });
+
     // Remove active class from filter container
     const filterContainer = document.querySelector(".stay-filter");
     if (filterContainer) {
       filterContainer.classList.remove("active");
     }
-    navigate(`/search?${searchParams}`);
+
+    // Create query string from refactored filter
+    const queryString = new URLSearchParams(refactoredFilter).toString();
+    navigate(`/search?${queryString}`);
   }
 
   function classModalOpen() {

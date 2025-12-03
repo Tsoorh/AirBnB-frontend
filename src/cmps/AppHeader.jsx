@@ -75,19 +75,19 @@ export function AppHeader() {
 									<Link to="/wishlist" onClick={toggleMenu}>Wishlists</Link>
 									<Link to="/trips" onClick={toggleMenu}>Trips</Link>
 									<Link to="/messages" onClick={toggleMenu}>Messages</Link>
-									<Link to="/trips" onClick={toggleMenu}>Profile</Link>
+									<Link to={`/host/${user._id}`} onClick={toggleMenu}>Profile</Link>
 									<hr />
-									<Link to="/trips" onClick={toggleMenu}>Account settings</Link>
-									<Link to="/trips" onClick={toggleMenu}>Languages & currency</Link>
-									<hr />
+									{/* <Link to="/trips" onClick={toggleMenu}>Account settings</Link> */}
+									{/* <Link to="/trips" onClick={toggleMenu}>Languages & currency</Link> */}
+									{/* <hr /> */}
 								</>
 							)}
 
 						<Link to="/help" onClick={toggleMenu}>Help Center</Link>
-						<hr />
-							<Link to="" onClick={toggleMenu}>Refer a host</Link>
-							<Link to="" onClick={toggleMenu}>Find a co-host</Link>
-							<Link to="" onClick={toggleMenu}>Gift cards</Link>
+						{/* <hr /> */}
+							{/* <Link to="" onClick={toggleMenu}>Refer a host</Link> */}
+							{/* <Link to="" onClick={toggleMenu}>Find a co-host</Link> */}
+							{/* <Link to="" onClick={toggleMenu}>Gift cards</Link> */}
 							<hr />
 							{user ? (
 								<button onClick={() => { onLogout(); toggleMenu(); }}>Log out</button>
