@@ -58,9 +58,9 @@ export function getDefaultFilter() {
     return {
         txt: '',
         city: '',
-        labels: [],
-        minPrice: 70,
-        maxPrice: 3000,
+        // labels: [],
+        // minPrice: 70,
+        // maxPrice: 3000,
         dates: {
             checkIn: null,
             checkOut: null

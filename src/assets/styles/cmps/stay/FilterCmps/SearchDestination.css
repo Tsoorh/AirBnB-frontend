@@ -1,5 +1,8 @@
         .destination-modal { 
-          width: min(520px, 90vw); 
+          display: flex;
+          flex-direction: column;
+          min-width: 300px;
+          flex-grow: 1;
         }
 
         .input {

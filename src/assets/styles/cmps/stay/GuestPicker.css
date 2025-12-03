@@ -2,13 +2,6 @@
     padding: 2rem;
     min-width: 25rem;
 
-    /* &li::after:not(:last-of-type){
-        content: ""; 
-        display: block;
-        height: 4px; 
-        background-color: #ccc; 
-        margin: 1rem 0; 
-    } */
     >li{
         margin: 0.2rem;
         padding: 1.3rem 0;
