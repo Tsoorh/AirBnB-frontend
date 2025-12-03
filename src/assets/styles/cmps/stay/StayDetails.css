@@ -865,6 +865,9 @@
   .stay-sidebar {
     position: static;
   }
+  .stay-main-content{
+    display: block;
+  }
 }
 
 @media (max-width: 768px) {

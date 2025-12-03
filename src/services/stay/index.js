@@ -9,7 +9,6 @@ import { stayService as remote } from './stay.service.remote'
 export function getEmptyStay() {
     const now = Date.now()
 	return {
-        _id: '',
         name: '',
         type: '',
         summary:'',

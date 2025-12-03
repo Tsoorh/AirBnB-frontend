@@ -15,6 +15,7 @@ import { updateStay } from '../store/actions/stay.actions'
 import { userService } from '../services/user'
 import dayjs from 'dayjs'
 import { AddReviewModal } from '../cmps/modals/AddReviewModal'
+import { reviewService } from '../services/review/review.service.remote'
 
 export function StayDetails() {
   const loggedInUser = useSelector(storeState => storeState.userModule.user)
@@ -157,7 +158,7 @@ async function hadleSumitReview(reviewData) {
     const newReview = {
       _id: Date.now().toString(), 
       txt: reviewData.text,
-      rate: reviewData.rating,
+      rating: reviewData.rating,
       byUser: {
         _id: loggedInUser._id,
         fullname: loggedInUser.fullname,
@@ -165,16 +166,17 @@ async function hadleSumitReview(reviewData) {
       },
       createdAt: Date.now()
     }
-    const updatedStay = {
-      ...stay,
-      reviews: [...(stay.reviews || []), newReview],
-      rating: {
-        ...stay.rating,
-        count: (stay.rating?.count || 0) + 1,
-        avg: ((stay.rating?.avg || 0) * (stay.rating?.count || 0) + reviewData.rating) / ((stay.rating?.count || 0) + 1)
-      }
-    }
-    await updateStay(updatedStay)
+    // const updatedStay = {
+    //   ...stay,
+    //   reviews: [...(stay.reviews || []), newReview],
+    //   rating: {
+    //     ...stay.rating,
+    //     count: (stay.rating?.count || 0) + 1,
+    //     avg: ((stay.rating?.avg || 0) * (stay.rating?.count || 0) + reviewData.rating) / ((stay.rating?.count || 0) + 1)
+    //   }
+    // }
+    // await updateStay(updatedStay)
+    await reviewService.add(stay._id,newReview);
     setReviewModalOpen(false)
     showSuccessMsg('Review submitted successfully')
   } catch (err) {
@@ -688,7 +690,7 @@ const handleHeartClick = async (ev) => {
 
       )} */}
 
-      {(stay.houseRules.length || stay.safety.length || stay.cancellationPolicy.length) > 0 && (
+      {(stay.houseRules?.length || stay.safety?.length || stay.cancellationPolicy?.length) > 0 && (
         <section className="stay-things-to-know">
           <h2>Things to know</h2>
           <div className="things-grid">

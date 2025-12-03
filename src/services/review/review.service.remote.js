@@ -9,8 +9,8 @@ async function add(stayId,review) {
 	return await httpService.post(`review/${stayId}`,review )
 }
 
-async function update(reviewId) { 
-	return await httpService.delete(`review/${stayId}`,review)
+async function update(stayId,reviewId) { 
+	return await httpService.delete(`review/${stayId}/${reviewId}`)
 }
 
 
