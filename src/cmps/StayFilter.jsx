@@ -40,22 +40,12 @@ export function StayFilter({ isOnViewPort }) {
       name: "checkIn",
       Label: "When",
       Placeholder:
-        (filter.dates.checkIn && filter.dates.checkIn + " - " +filter.dates.checkOut) ||
+        (filter.dates.checkIn && filter.dates.checkIn + " - " + filter.dates.checkOut) ||
         "Add dates",
       Component: MobileDates,
       propHandler: handleDateChange,
       selectionState: mobileFilterSelection.checkIn,
     },
-    // {
-    //   name: "checkIn",
-    //   Label: "When",
-    //   Placeholder:
-    //     (filter.dates.checkIn && filter.dates.checkIn + " - " +filter.dates.checkOut) ||
-    //     "Add dates",
-    //   Component: ChooseDates,
-    //   propHandler: handleDateChange,
-    //   selectionState: mobileFilterSelection.checkIn,
-    // },
     {
       name: "guest",
       Label: "Who",
@@ -74,7 +64,6 @@ export function StayFilter({ isOnViewPort }) {
 
   useEffect(() => {
     setSearchParams({ ...refactorFilter(filter) });
-    console.log("filter: ", filter);
   }, [filter]);
 
   useEffect(() => {
@@ -172,7 +161,7 @@ export function StayFilter({ isOnViewPort }) {
   }
 
   function handleCityChange(city) {
-    if(width<745) setMobileFilterSelection(prev=>({...prev,destination:false}));
+    if (width < 745) setMobileFilterSelection(prev => ({ ...prev, destination: false }));
     setFilter((prev) => ({ ...prev, city }));
   }
 
@@ -362,35 +351,3 @@ export function StayFilter({ isOnViewPort }) {
     );
   }
 }
-
-// const [ filterToEdit, setFilterToEdit ] = useState(structuredClone(filterBy))
-
-// useEffect(() => {
-//     setFilterBy(filterToEdit)
-// }, [filterToEdit])
-
-// function handleChange(ev) {
-//     const type = ev.target.type
-//     const field = ev.target.name
-//     let value
-
-//     switch (type) {
-//         case 'text':
-//         case 'radio':
-//             value = field === 'sortDir' ? +ev.target.value : ev.target.value
-//             if(!filterToEdit.sortDir) filterToEdit.sortDir = 1
-//             break
-//         case 'number':
-//             value = +ev.target.value || ''
-//             break
-//     }
-//     setFilterToEdit({ ...filterToEdit, [field]: value })
-// }
-
-// function clearFilter() {
-//     setFilterToEdit({ ...filterToEdit, txt: '', minSpeed: '', maxPrice: '' })
-// }
-
-// function clearSort() {
-//     setFilterToEdit({ ...filterToEdit, sortField: '', sortDir: '' })
-// }
