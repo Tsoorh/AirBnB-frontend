@@ -14,11 +14,11 @@ export function ReviewList({ reviews, onRemoveReview }) {
 
     return <section>
         <ul className="review-list">
-            {reviews.map(review =>
-                <li key={review._id}>
+            {reviews.map((review, idx) =>
+                <li key={review._id || review.id || `review-${idx}`}>
                     {shouldShowActionBtns(review) && <div className="actions">
-                        {/* <button onClick={() => onRemoveReview(review._id)}>x</button> */}
-                    </div>}                    
+                        <button onClick={() => onRemoveReview(review._id)}>x</button>
+                    </div>}
                     <ReviewPreview review={review}/>
                 </li>)
             }

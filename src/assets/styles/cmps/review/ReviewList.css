@@ -1,9 +1,15 @@
 .review-list {
-    --min-column-size: 220px;
+    --min-column-size: 300px;
 
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(var(--min-column-size), 1fr));
     gap: .5em;
+
+    & > li {
+        overflow: hidden;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
 
     .actions {
         & button {

@@ -14,7 +14,7 @@ import { updateUser } from '../store/actions/user.actions'
 import { updateStay } from '../store/actions/stay.actions'
 import { userService } from '../services/user'
 import dayjs from 'dayjs'
-import '../assets/styles/cmps/stay/StayDetails.css'
+import { AddReviewModal } from '../cmps/modals/AddReviewModal'
 
 export function StayDetails() {
   const loggedInUser = useSelector(storeState => storeState.userModule.user)
@@ -26,6 +26,7 @@ export function StayDetails() {
   const [isHostBioExpanded, setIsHostBioExpanded] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
   const [hostDetails, setHostDetails] = useState(null)
+  const [ reviewModalOpen, setReviewModalOpen ] = useState(false) 
   
   // Get dates from URL params and validate them
   const checkInParamRaw = searchParams.get('checkIn') || ''
@@ -47,7 +48,7 @@ export function StayDetails() {
 
   useEffect(() => {
     loadStay(stayId)
-  }, [stayId])
+  }, [stayId, stay])
 
   // Sync isLiked state with user's liked array
   useEffect(() => {
@@ -114,13 +115,77 @@ export function StayDetails() {
   const shouldTruncateDescription = stay.summary && stay.summary.length > 350
   const displayedDescription = !shouldTruncateDescription || isDescriptionExpanded ? stay.summary : `${descriptionPreview}...`
   
+function handleAddReview() {
+  setReviewModalOpen(true)
+}
 
-  
+function handleCloseReviewModal() {
+  setReviewModalOpen(false)
+}
 
-  const handleShowReviews = () => {
-    reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+async function onRemoveReview(reviewId) {
+  console.log('onRemoveReview');
+
+  try{
+    const updatedReviews = stay.reviews.filter(review => review._id !== reviewId)
+    const updatedStay = {
+      ...stay,
+      reviews: updatedReviews,
+      rating: {
+        ...stay.rating,
+        count: updatedReviews.length,
+        avg: updatedReviews.length
+          ? updatedReviews.reduce((sum, r) => sum + r.rate, 0) / updatedReviews.length
+          : 0
+      }
+    }
+    await updateStay(updatedStay)
+    showSuccessMsg('Review removed successfully')
+    }catch(err){
+      console.error('Error removing review:', err)
+      showErrorMsg('Failed to remove review')
+    }
+}
+
+async function hadleSumitReview(reviewData) {
+  if (!loggedInUser) {
+    showErrorMsg('Please login to add a review')
+    return
   }
 
+  try {
+    const newReview = {
+      _id: Date.now().toString(), 
+      txt: reviewData.text,
+      rate: reviewData.rating,
+      byUser: {
+        _id: loggedInUser._id,
+        fullname: loggedInUser.fullname,
+        imgUrl: loggedInUser.imgUrl || `https://i.pravatar.cc/150?u=${loggedInUser._id}`
+      },
+      createdAt: Date.now()
+    }
+    const updatedStay = {
+      ...stay,
+      reviews: [...(stay.reviews || []), newReview],
+      rating: {
+        ...stay.rating,
+        count: (stay.rating?.count || 0) + 1,
+        avg: ((stay.rating?.avg || 0) * (stay.rating?.count || 0) + reviewData.rating) / ((stay.rating?.count || 0) + 1)
+      }
+    }
+    await updateStay(updatedStay)
+    setReviewModalOpen(false)
+    showSuccessMsg('Review submitted successfully')
+  } catch (err) {
+    console.error('Error submitting review:', err)
+    showErrorMsg('Failed to submit review')
+  }
+}
+
+const handleShowReviews = () => {
+  reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
   // Handle date selection from calendar - both calendars can select either date
   const handleDateChange = (ev) => {
     if (!ev || ev.$D === undefined || ev.$M === undefined || ev.$y === undefined) return
@@ -451,11 +516,15 @@ const handleHeartClick = async (ev) => {
           )}
         </div>
         {stay.reviews?.length ? (
-          <ReviewList reviews={stay.reviews} />
+          <ReviewList reviews={stay.reviews} onRemoveReview={onRemoveReview} />
         ) : (
           <p className="no-reviews">No reviews yet</p>
         )}
+        <button className="add-review-btn" onClick={handleAddReview}>Add review</button>
       </section>
+
+      {/* Review Modal */}
+      {reviewModalOpen && ( <AddReviewModal hadleSumitReview={hadleSumitReview} handleCloseReviewModal={handleCloseReviewModal}/>)}
 
       {stay.loc && (
         <section className="stay-location">
