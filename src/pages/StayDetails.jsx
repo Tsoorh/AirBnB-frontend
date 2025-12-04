@@ -127,19 +127,7 @@ export function StayDetails() {
     console.log('onRemoveReview');
 
     try {
-      // const updatedReviews = stay.reviews.filter(review => review._id !== reviewId)
-      // const updatedStay = {
-      //   ...stay,
-      //   reviews: updatedReviews,
-      //   rating: {
-      //     ...stay.rating,
-      //     count: updatedReviews.length,
-      //     avg: updatedReviews.length
-      //       ? updatedReviews.reduce((sum, r) => sum + r.rate, 0) / updatedReviews.length
-      //       : 0
-      //   }
-      // }
-      await removeReviewFromStay(stay,reviewId)
+      await removeReviewFromStay(stay, reviewId)
       loadStay(stay._id)
       showSuccessMsg('Review removed successfully')
     } catch (err) {
@@ -166,17 +154,6 @@ export function StayDetails() {
         },
         createdAt: Date.now()
       }
-      // const updatedStay = {
-      //   ...stay,
-      //   reviews: [...(stay.reviews || []), newReview],
-      //   rating: {
-      //     ...stay.rating,
-      //     count: (stay.rating?.count || 0) + 1,
-      //     avg: ((stay.rating?.avg || 0) * (stay.rating?.count || 0) + reviewData.rating) / ((stay.rating?.count || 0) + 1)
-      //   }
-      // }
-      // await updateStay(updatedStay)
-      // await reviewService.add(stay._id,newReview);
       await addReviewToStay(stay, newReview)
       loadStay(stay._id)
       setReviewModalOpen(false)
