@@ -73,6 +73,30 @@ export async function addStayMsg(stayId, txt) {
     }
 }
 
+export async function addReviewToStay(stay,review) {
+    try {
+        let stayToUpdate = {...stay,reviews:[...(stay.reviews||[]),review]}
+        store.dispatch(getCmdUpdateStay(stayToUpdate))
+        await reviewService.add(stay._id,review);
+    } catch (err) {
+        store.dispatch(getCmdUpdateStay(stay))
+        console.log('Cannot add review to stay', err)
+        throw err
+    }
+}
+export async function removeReviewFromStay(stay,reviewId) {
+    try {
+        let updatedReviews = stay.reviews.filter(review=> review._id !== reviewId)
+        let stayToUpdate = {...stay,reviews:updatedReviews}
+        store.dispatch(getCmdUpdateStay(stayToUpdate))
+        await reviewService.remove(stay._id,reviewId);
+    } catch (err) {
+        store.dispatch(getCmdUpdateStay(stay))
+        console.log('Cannot remove review from stay', err)
+        throw err
+    }
+}
+
 // Command Creators:
 function getCmdSetStays(stays) {
     return {

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams, useSearchParams, Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { loadStay } from '../store/actions/stay.actions'
+import { addReviewToStay, loadStay, removeReviewFromStay } from '../store/actions/stay.actions'
 import { ReviewList } from '../cmps/ReviewList'
 import { ImageGallery } from '../cmps/ImageGallery'
 import { BookingWidget } from '../cmps/BookingWidget'
@@ -15,7 +15,6 @@ import { updateStay } from '../store/actions/stay.actions'
 import { userService } from '../services/user'
 import dayjs from 'dayjs'
 import { AddReviewModal } from '../cmps/modals/AddReviewModal'
-import { reviewService } from '../services/review/review.service.remote'
 
 export function StayDetails() {
   const loggedInUser = useSelector(storeState => storeState.userModule.user)
@@ -27,19 +26,19 @@ export function StayDetails() {
   const [isHostBioExpanded, setIsHostBioExpanded] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
   const [hostDetails, setHostDetails] = useState(null)
-  const [ reviewModalOpen, setReviewModalOpen ] = useState(false) 
-  
+  const [reviewModalOpen, setReviewModalOpen] = useState(false)
+
   // Get dates from URL params and validate them
   const checkInParamRaw = searchParams.get('checkIn') || ''
   const checkOutParamRaw = searchParams.get('checkOut') || ''
   const checkInParam = checkInParamRaw && dayjs(checkInParamRaw).isValid() ? checkInParamRaw : ''
   const checkOutParam = checkOutParamRaw && dayjs(checkOutParamRaw).isValid() ? checkOutParamRaw : ''
-  
+
   // State to control calendar months - left shows current/check-in month, right shows next month
   const getLeftMonth = () => checkInParam ? dayjs(checkInParam).startOf('month') : dayjs().startOf('month')
   const [leftMonth, setLeftMonth] = useState(getLeftMonth)
   const [rightMonth, setRightMonth] = useState(() => getLeftMonth().add(1, 'month'))
-  
+
   // Update calendar months when check-in changes
   useEffect(() => {
     const newLeftMonth = getLeftMonth()
@@ -81,7 +80,7 @@ export function StayDetails() {
   }
 
 
-  const formattedRating = stay.rating?.avg 
+  const formattedRating = stay.rating?.avg
     ? Number(stay.rating?.avg).toFixed(2).replace(/\.0+$/, '').replace(/\.(\d)0$/, '.$1')
     : null
   const locationLabel = [stay.loc?.city, stay.loc?.country].filter(Boolean).join(', ')
@@ -92,21 +91,21 @@ export function StayDetails() {
     stay.capacity?.bathrooms && `${stay.capacity.bathrooms} ${stay.capacity.bathrooms === 1 ? 'bathroom' : 'bathrooms'}`
   ].filter(Boolean)
   // const checkOutTime = stay.checkOut?.by
-  const hostAvatar = stay.host?.picture || (stay.host?.fullname 
-    ? `https://i.pravatar.cc/120?u=${encodeURIComponent(stay.host.fullname)}` 
+  const hostAvatar = stay.host?.picture || (stay.host?.fullname
+    ? `https://i.pravatar.cc/120?u=${encodeURIComponent(stay.host.fullname)}`
     : 'https://i.pravatar.cc/120')
-  
+
   const yearsHosting = stay.createdAt ? Math.floor((Date.now() - stay.createdAt) / (1000 * 60 * 60 * 24 * 365)) : 0
-  
+
   // Mock host biography (in real app, this would come from stay.host.bio)
   const hostBio = stay.host?.bio || `I am a passionate host who loves providing great stays for guests. With years of experience in hospitality, I ensure every guest feels welcome and comfortable during their stay.`
   const hostBioPreview = hostBio.slice(0, 200)
   const shouldTruncateBio = hostBio.length > 200
   const displayedBio = !shouldTruncateBio || isHostBioExpanded ? hostBio : `${hostBioPreview}...`
-  
+
   // Mock co-hosts (in real app, this would come from stay.host.coHosts)
   const coHosts = stay.host?.coHosts || []
-  
+
   // Mock host details
   const responseRate = stay.host?.responseRate || 100
   const responseTime = stay.host?.responseTime || 'within an hour'
@@ -115,90 +114,93 @@ export function StayDetails() {
   const descriptionPreview = stay.summary?.slice(0, 350)
   const shouldTruncateDescription = stay.summary && stay.summary.length > 350
   const displayedDescription = !shouldTruncateDescription || isDescriptionExpanded ? stay.summary : `${descriptionPreview}...`
-  
-function handleAddReview() {
-  setReviewModalOpen(true)
-}
 
-function handleCloseReviewModal() {
-  setReviewModalOpen(false)
-}
+  function handleAddReview() {
+    setReviewModalOpen(true)
+  }
 
-async function onRemoveReview(reviewId) {
-  console.log('onRemoveReview');
+  function handleCloseReviewModal() {
+    setReviewModalOpen(false)
+  }
 
-  try{
-    const updatedReviews = stay.reviews.filter(review => review._id !== reviewId)
-    const updatedStay = {
-      ...stay,
-      reviews: updatedReviews,
-      rating: {
-        ...stay.rating,
-        count: updatedReviews.length,
-        avg: updatedReviews.length
-          ? updatedReviews.reduce((sum, r) => sum + r.rate, 0) / updatedReviews.length
-          : 0
-      }
-    }
-    await updateStay(updatedStay)
-    showSuccessMsg('Review removed successfully')
-    }catch(err){
+  async function onRemoveReview(reviewId) {
+    console.log('onRemoveReview');
+
+    try {
+      // const updatedReviews = stay.reviews.filter(review => review._id !== reviewId)
+      // const updatedStay = {
+      //   ...stay,
+      //   reviews: updatedReviews,
+      //   rating: {
+      //     ...stay.rating,
+      //     count: updatedReviews.length,
+      //     avg: updatedReviews.length
+      //       ? updatedReviews.reduce((sum, r) => sum + r.rate, 0) / updatedReviews.length
+      //       : 0
+      //   }
+      // }
+      await removeReviewFromStay(stay,reviewId)
+      loadStay(stay._id)
+      showSuccessMsg('Review removed successfully')
+    } catch (err) {
       console.error('Error removing review:', err)
       showErrorMsg('Failed to remove review')
     }
-}
-
-async function hadleSumitReview(reviewData) {
-  if (!loggedInUser) {
-    showErrorMsg('Please login to add a review')
-    return
   }
 
-  try {
-    const newReview = {
-      _id: Date.now().toString(), 
-      txt: reviewData.text,
-      rating: reviewData.rating,
-      byUser: {
-        _id: loggedInUser._id,
-        fullname: loggedInUser.fullname,
-        imgUrl: loggedInUser.imgUrl || `https://i.pravatar.cc/150?u=${loggedInUser._id}`
-      },
-      createdAt: Date.now()
+  async function hadleSumitReview(reviewData) {
+    if (!loggedInUser) {
+      showErrorMsg('Please login to add a review')
+      return
     }
-    // const updatedStay = {
-    //   ...stay,
-    //   reviews: [...(stay.reviews || []), newReview],
-    //   rating: {
-    //     ...stay.rating,
-    //     count: (stay.rating?.count || 0) + 1,
-    //     avg: ((stay.rating?.avg || 0) * (stay.rating?.count || 0) + reviewData.rating) / ((stay.rating?.count || 0) + 1)
-    //   }
-    // }
-    // await updateStay(updatedStay)
-    await reviewService.add(stay._id,newReview);
-    setReviewModalOpen(false)
-    showSuccessMsg('Review submitted successfully')
-  } catch (err) {
-    console.error('Error submitting review:', err)
-    showErrorMsg('Failed to submit review')
-  }
-}
 
-const handleShowReviews = () => {
-  reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-}
+    try {
+      const newReview = {
+        _id: Date.now().toString(),
+        txt: reviewData.text,
+        rating: reviewData.rating,
+        byUser: {
+          _id: loggedInUser._id,
+          fullname: loggedInUser.fullname,
+          imgUrl: loggedInUser.imgUrl || `https://i.pravatar.cc/150?u=${loggedInUser._id}`
+        },
+        createdAt: Date.now()
+      }
+      // const updatedStay = {
+      //   ...stay,
+      //   reviews: [...(stay.reviews || []), newReview],
+      //   rating: {
+      //     ...stay.rating,
+      //     count: (stay.rating?.count || 0) + 1,
+      //     avg: ((stay.rating?.avg || 0) * (stay.rating?.count || 0) + reviewData.rating) / ((stay.rating?.count || 0) + 1)
+      //   }
+      // }
+      // await updateStay(updatedStay)
+      // await reviewService.add(stay._id,newReview);
+      await addReviewToStay(stay, newReview)
+      loadStay(stay._id)
+      setReviewModalOpen(false)
+      showSuccessMsg('Review submitted successfully')
+    } catch (err) {
+      console.error('Error submitting review:', err)
+      showErrorMsg('Failed to submit review')
+    }
+  }
+
+  const handleShowReviews = () => {
+    reviewsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
   // Handle date selection from calendar - both calendars can select either date
   const handleDateChange = (ev) => {
     if (!ev || ev.$D === undefined || ev.$M === undefined || ev.$y === undefined) return
-    
+
     const { $D, $M, $y } = ev
     const pickedDateFormatted = `${$y}-${String($M + 1).padStart(2, '0')}-${String($D).padStart(2, '0')}`
-    
+
     if (!dayjs(pickedDateFormatted).isValid()) return
-    
+
     const newParams = new URLSearchParams(searchParams)
-    
+
     if (!checkInParam) {
       newParams.set('checkIn', pickedDateFormatted)
     } else if (!checkOutParam) {
@@ -218,7 +220,7 @@ const handleShowReviews = () => {
       } else {
         const distToCheckIn = Math.abs(dayjs(pickedDateFormatted).diff(dayjs(checkInParam), 'day'))
         const distToCheckOut = Math.abs(dayjs(pickedDateFormatted).diff(dayjs(checkOutParam), 'day'))
-        
+
         if (distToCheckIn <= distToCheckOut) {
           newParams.set('checkIn', pickedDateFormatted)
           if (pickedDateFormatted >= checkOutParam) {
@@ -233,10 +235,10 @@ const handleShowReviews = () => {
         }
       }
     }
-    
+
     setSearchParams(newParams)
   }
-  
+
   // Handle month navigation - keep calendars synchronized
   const handleLeftMonthChange = (newMonth) => {
     const newLeftMonth = dayjs(newMonth).startOf('month')
@@ -244,7 +246,7 @@ const handleShowReviews = () => {
     setLeftMonth(newLeftMonth)
     setRightMonth(newRightMonth)
   }
-  
+
   const handleRightMonthChange = (newMonth) => {
     const newRightMonth = dayjs(newMonth).startOf('month')
     const newLeftMonth = newRightMonth.subtract(1, 'month')
@@ -283,49 +285,49 @@ const handleShowReviews = () => {
     })
   }
 
-const handleHeartClick = async (ev) => {
-      ev.preventDefault()
-      ev.stopPropagation()
-      if (!loggedInUser) {
-          showErrorMsg('Please login to like stays')
-          return
+  const handleHeartClick = async (ev) => {
+    ev.preventDefault()
+    ev.stopPropagation()
+    if (!loggedInUser) {
+      showErrorMsg('Please login to like stays')
+      return
+    }
+    try {
+      const newIsLiked = !isLiked
+      setIsLiked(newIsLiked)
+
+      const updatedUserLiked = newIsLiked
+        ? [...(loggedInUser.liked || []), stay._id]
+        : (loggedInUser.liked || []).filter(id => id !== stay._id)
+
+      const updatedUser = {
+        ...loggedInUser,
+        liked: updatedUserLiked
       }
-      try {
-          const newIsLiked = !isLiked
-          setIsLiked(newIsLiked)
 
-          const updatedUserLiked = newIsLiked
-              ? [...(loggedInUser.liked || []), stay._id]
-              : (loggedInUser.liked || []).filter(id => id !== stay._id)
+      const updatedStayLikedBy = newIsLiked
+        ? [...(stay.likedByUserIds || []), loggedInUser._id]
+        : (stay.likedByUserIds || []).filter(id => id !== loggedInUser._id)
 
-          const updatedUser = {
-              ...loggedInUser,
-              liked: updatedUserLiked
-          }
-
-          const updatedStayLikedBy = newIsLiked
-          ? [...(stay.likedByUserIds || []), loggedInUser._id]
-          : (stay.likedByUserIds || []).filter(id => id !== loggedInUser._id)
-
-          const updatedStay = {
-              ...stay,
-              likedByUserIds: updatedStayLikedBy
-          }
-
-          await Promise.all([
-              updateUser(updatedUser),
-              updateStay(updatedStay)
-          ])
-
-
-          showSuccessMsg(newIsLiked ? 'Added to favorites' : 'Removed from favorites')
-      } catch (err) {
-          setIsLiked(!isLiked)
-          showErrorMsg('Could not update favorites')
-          console.error('Error updating favorites:', err)
+      const updatedStay = {
+        ...stay,
+        likedByUserIds: updatedStayLikedBy
       }
+
+      await Promise.all([
+        updateUser(updatedUser),
+        updateStay(updatedStay)
+      ])
+
+
+      showSuccessMsg(newIsLiked ? 'Added to favorites' : 'Removed from favorites')
+    } catch (err) {
+      setIsLiked(!isLiked)
+      showErrorMsg('Could not update favorites')
+      console.error('Error updating favorites:', err)
+    }
   }
-  
+
 
   return (
     <div className="stay-details">
@@ -344,7 +346,7 @@ const handleHeartClick = async (ev) => {
             <span>Share</span>
           </button>
           <button type="button" className="header-action-link" onClick={handleHeartClick}>
-            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false" style={{ overflow: 'visible'}}>
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false" style={{ overflow: 'visible' }}>
               <path d="M12 21.35 10.55 20C5.4 15.36 2 12.27 2 8.5 2 5.42 4.42 3 7.5 3A4.49 4.49 0 0 1 12 5.09 4.49 4.49 0 0 1 16.5 3C19.58 3 22 5.42 22 8.5c0 3.77-3.4 6.86-8.55 11.54Z" fill={isLiked ? 'var(--clr6)' : 'none'} color={isLiked ? 'var(--clr6)' : 'none'} stroke="currentColor" strokeWidth="1.5" />
             </svg>
             {isLiked ? 'Saved' : 'Save'}
@@ -376,12 +378,12 @@ const handleHeartClick = async (ev) => {
               <div className="stay-summary-rating">
                 <span className="summary-star" aria-hidden="true">{'\u2605'}</span>
                 <span className="summary-rating-value">{formattedRating}</span>
-                    <span className="summary-dot">{'\u00b7'}</span>
-                    <button type="button" onClick={handleShowReviews}>
-                      {stay.reviews?.length
-                      ? `${stay.reviews.length} reviews`
-                      : 'Be the first to review'}
-                    </button>
+                <span className="summary-dot">{'\u00b7'}</span>
+                <button type="button" onClick={handleShowReviews}>
+                  {stay.reviews?.length
+                    ? `${stay.reviews.length} reviews`
+                    : 'Be the first to review'}
+                </button>
               </div>
             )}
           </section>
@@ -408,7 +410,7 @@ const handleHeartClick = async (ev) => {
               <section className="stay-highlights">
                 {stay.labels.map(label => (
                   <div key={label} className="stay-highlight-item">
-                      <p className="highlight-title">{label}</p>
+                    <p className="highlight-title">{label}</p>
                   </div>
                 ))}
               </section>
@@ -453,16 +455,16 @@ const handleHeartClick = async (ev) => {
             <section className="stay-date-selection">
               <div className="date-selection-header">
                 <h3>
-                 {(checkInParam && checkOutParam && nights > 0)
-                   ? `${nights} ${nights === 1 ? 'night' : 'nights'} in ${locationLabel || 'this location'}`
+                  {(checkInParam && checkOutParam && nights > 0)
+                    ? `${nights} ${nights === 1 ? 'night' : 'nights'} in ${locationLabel || 'this location'}`
                     : 'Select check-in date'
-                 }
+                  }
                 </h3>
                 <p className="date-selection-subtitle">
                   {(checkInParam && checkOutParam) ? (
-                     ` ${formatDateDisplay(checkInParam)} - ${formatDateDisplay(checkOutParam)}`
+                    ` ${formatDateDisplay(checkInParam)} - ${formatDateDisplay(checkOutParam)}`
                   ) : 'Add your travel dates for exact pricing'}
-                  </p>
+                </p>
               </div>
 
               <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -526,7 +528,7 @@ const handleHeartClick = async (ev) => {
       </section>
 
       {/* Review Modal */}
-      {reviewModalOpen && ( <AddReviewModal hadleSumitReview={hadleSumitReview} handleCloseReviewModal={handleCloseReviewModal}/>)}
+      {reviewModalOpen && (<AddReviewModal hadleSumitReview={hadleSumitReview} handleCloseReviewModal={handleCloseReviewModal} />)}
 
       {stay.loc && (
         <section className="stay-location">
