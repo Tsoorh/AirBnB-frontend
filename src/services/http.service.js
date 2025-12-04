@@ -25,7 +25,7 @@ export const httpService = {
 }
 
 async function ajax(endpoint, method = 'GET', data = null) {
-    const url = `${BASE_URL}${endpoint}`
+    const url = endpoint
     const params = (method === 'GET') ? data : null
 
     const options = { url, method, data, params }

@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react-swc'
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: '../miss-bugs-backend/public',
+    outDir: '../AirBnB-backend/public',
     emptyOutDir: true
   }
 })
