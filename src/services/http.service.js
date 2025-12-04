@@ -6,8 +6,8 @@ const BASE_URL = process.env.NODE_ENV === 'production'
     : '//localhost:3030/api/'
 
 
-const axios = Axios.create({ withCredentials: true })
-const axiosNoIntercept = Axios.create({ withCredentials: true })
+const axios = Axios.create({ withCredentials: true, baseURL: BASE_URL })
+const axiosNoIntercept = Axios.create({ withCredentials: true, baseURL: BASE_URL })
 
 export const httpService = {
     get(endpoint, data) {
@@ -44,23 +44,17 @@ async function ajax(endpoint, method = 'GET', data = null) {
     }
 }
 
-// axios.interceptors.response.use(
-//     (response)=>response,
-//     async (error)=>{
+let isRefreshing = false
+let refreshSubscribers = []
 
-//         const originalRequest =error.config;
-//         if(error.response.status === 401 && originalRequest.url !== "/api/auth/refresh") {
-//             try{
-//                 await ;
-//                 return httpService(originalRequest)
-//             }catch(refreshErr){
-//                 await userService.logout()
-//                 return Promise.reject(error)
-//             }
-//         }
+function onRefreshed() {
+    refreshSubscribers.forEach(callback => callback())
+    refreshSubscribers = []
+}
 
-//     return Promise.reject(error);
-//   });
+function addRefreshSubscriber(callback) {
+    refreshSubscribers.push(callback)
+}
 
 axios.interceptors.response.use(
     (response) => response,
@@ -69,20 +63,36 @@ axios.interceptors.response.use(
         const status = error.response?.status;
         const refreshUrl = `${BASE_URL}auth/refresh`;
 
-        if (status === 401) {
-            if (originalRequest.url === refreshUrl) {
+        if (status === 401 && !originalRequest._retry) {
+            if (originalRequest.url?.includes('/auth/refresh')) {
                 //Refresh token failed or revoked. Logging out.
+                isRefreshing = false
                 await userService.logout();
                 return Promise.reject(error);
             }
 
+            originalRequest._retry = true
+
+            if (isRefreshing) {
+                return new Promise((resolve) => {
+                    addRefreshSubscriber(() => {
+                        resolve(axios(originalRequest))
+                    })
+                })
+            }
+
+            isRefreshing = true
+
             //Access Token expired. Attempting to refresh...
             try {
                 await _renewAccessToken();
+                isRefreshing = false
+                onRefreshed()
                 //Token refreshed. Retrying original request...
                 return axios(originalRequest);
             } catch (refreshErr) {
                 //Failed to renew token. Logging out.
+                isRefreshing = false
                 await userService.logout();
                 return Promise.reject(error);
             }
@@ -93,7 +103,6 @@ axios.interceptors.response.use(
 
 
 async function _renewAccessToken() {
-    const refreshEndpoint = `${BASE_URL}auth/refresh`;
-    const res = await axiosNoIntercept.post(refreshEndpoint);
-    return res.data;
+    const res = await axiosNoIntercept.post('auth/refresh')
+    return res.data
 }

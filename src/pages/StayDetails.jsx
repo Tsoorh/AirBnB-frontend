@@ -49,7 +49,7 @@ export function StayDetails() {
 
   useEffect(() => {
     loadStay(stayId)
-  }, [stayId, stay])
+  }, [stayId]) /// removed stay from dependencies - infinite loop
 
   // Sync isLiked state with user's liked array
   useEffect(() => {
