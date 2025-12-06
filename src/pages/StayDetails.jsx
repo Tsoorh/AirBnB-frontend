@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useParams, useSearchParams, Link } from 'react-router-dom'
+import { useParams, useSearchParams, Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { addReviewToStay, loadStay, removeReviewFromStay } from '../store/actions/stay.actions'
 import { ReviewList } from '../cmps/ReviewList'
@@ -27,6 +27,7 @@ export function StayDetails() {
   const [isLiked, setIsLiked] = useState(false)
   const [hostDetails, setHostDetails] = useState(null)
   const [reviewModalOpen, setReviewModalOpen] = useState(false)
+  const navigator = useNavigate()
 
   // Get dates from URL params and validate them
   const checkInParamRaw = searchParams.get('checkIn') || ''
@@ -304,7 +305,13 @@ export function StayDetails() {
       console.error('Error updating favorites:', err)
     }
   }
+  
+  //Send message to host 
 
+  function onHandleMessageHost(){
+    // stay.ownerId
+    // loggedInUser
+  }
 
   return (
     <div className="stay-details">
@@ -616,7 +623,7 @@ export function StayDetails() {
                 <p>Response rate: {responseRate}%</p>
                 <p>Responds {responseTime}</p>
               </div>
-              <button type="button" className="host-message-button">
+              <button type="button" className="host-message-button" onClick={onHandleMessageHost}>
                 Message host
               </button>
               <div className="host-payment-protection">

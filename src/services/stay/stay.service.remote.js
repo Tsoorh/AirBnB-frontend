@@ -4,28 +4,26 @@ export const stayService = {
     query,
     getById,
     save,
-    remove,
-    // addStayMsg
+    remove
 }
 
-async function query(filterBy = {         
-        txt: '',
-        city: '',
-        labels: [],
-        minPrice: 70,
-        maxPrice: 3000,
-        dates: {
-            checkIn: null,
-            checkOut: null
-        },
-        guests: {
-            adults: 0,
-            children: 0,
-            infants: 0,
-            pets: 0,
-        }
-    }) 
-    {
+async function query(filterBy = {
+    txt: '',
+    city: '',
+    labels: [],
+    minPrice: 70,
+    maxPrice: 3000,
+    dates: {
+        checkIn: null,
+        checkOut: null
+    },
+    guests: {
+        adults: 0,
+        children: 0,
+        infants: 0,
+        pets: 0,
+    }
+}) {
     // console.log('filterBy fron service:', filterBy);
     return httpService.get(`stay`, filterBy)
 }
@@ -38,13 +36,11 @@ async function remove(stayId) {
     return httpService.delete(`stay/${stayId}`)
 }
 async function save(stay) {
-    var savedStay
     if (stay._id) {
-        savedStay = await httpService.put(`stay/${stay._id}`, stay)
+        return await httpService.put(`stay/${stay._id}`, stay)
     } else {
-        savedStay = await httpService.post('stay', stay)
+        return await httpService.post('stay', stay)
     }
-    return savedStay
 }
 
 // async function addStayMsg(stayId, txt) {
