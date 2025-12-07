@@ -174,8 +174,28 @@
 
 .login-form button:hover{
     background: var(--btn-color-hover);
+}
 
+/* Divider */
+.login-signup .divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.5rem 0;
+    color: #717171;
+    font-size: 0.875rem;
+}
 
+.login-signup .divider::before,
+.login-signup .divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #dddddd;
+}
+
+.login-signup .divider span {
+    padding: 0 1rem;
+    font-weight: 500;
 }
 
 /* Responsive */

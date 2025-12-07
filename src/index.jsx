@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 
 import { BrowserRouter as Router } from 'react-router-dom'
 import { Provider } from 'react-redux'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 
 import * as serviceWorkerRegistration from './serviceWorkerRegistration'
 
@@ -15,7 +16,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
 	<Provider store={store}>
 		<Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-			<RootCmp />
+			<GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+				<RootCmp />
+			</GoogleOAuthProvider>
 		</Router>
 	</Provider>
 )

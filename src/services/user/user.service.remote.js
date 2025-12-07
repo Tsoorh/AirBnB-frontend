@@ -39,7 +39,11 @@ async function update(user) {
 async function login(userCred) {
 	if(!userCred.credentials) userCred.credentials={...userCred};
 	console.log('user cred:', userCred)
-	const user = await httpService.post('auth/login', userCred)
+
+	// Check if it's Google login
+	const endpoint = userCred.googleToken ? 'auth/google' : 'auth/login'
+
+	const user = await httpService.post(endpoint, userCred)
 	if (!user) throw new Error('Login failed - no user returned')
 	return saveLoggedinUser(user)
 }

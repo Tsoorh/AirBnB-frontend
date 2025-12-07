@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service.js'
 import { signup, login } from '../store/actions/user.actions.js'
 import { LoginForm } from './LoginForm.jsx'
+import { GoogleLoginButton } from './GoogleLoginButton.jsx'
 
 
 export function LoginSignupModal({ onClose }) {
@@ -36,6 +37,12 @@ export function LoginSignupModal({ onClose }) {
             <div className='login-signup' onClick={(e) => e.stopPropagation()}>
                 <button className="close-btn" onClick={onClose}>×</button>
                 <h2>{isSignup ? 'Sign up' : 'Log in'}</h2>
+
+                <GoogleLoginButton onClose={onClose} />
+
+                <div className="divider">
+                    <span>or</span>
+                </div>
 
                 <LoginForm
                     onLogin={onLogin}
