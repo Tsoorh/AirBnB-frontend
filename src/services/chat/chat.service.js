@@ -17,6 +17,5 @@ async function getMsgs(chatId) {
     return await httpService.get(`message/${chatId}`)
 }
 
-async function addMsg(chatId, msg) {
-    return await httpService.post(`message/${chatId}`, msg)
-}
+async function addMsg( msg) {
+    return await httpService.post(`message`, msg)}

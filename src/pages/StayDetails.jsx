@@ -15,6 +15,7 @@ import { updateStay } from '../store/actions/stay.actions'
 import { userService } from '../services/user'
 import dayjs from 'dayjs'
 import { AddReviewModal } from '../cmps/modals/AddReviewModal'
+import { findAndSetPrivateChat } from '../store/actions/chat.actions.js'
 
 export function StayDetails() {
   const loggedInUser = useSelector(storeState => storeState.userModule.user)
@@ -305,12 +306,12 @@ export function StayDetails() {
       console.error('Error updating favorites:', err)
     }
   }
-  
+
   //Send message to host 
 
-  function onHandleMessageHost(){
-    // stay.ownerId
-    // loggedInUser
+  async function onHandleMessageHost() {
+    const chatId =await findAndSetPrivateChat(stay.ownerId, loggedInUser)
+    navigator(`/chat`, { state: { participant: stay.ownerId, chatId: chatId } })
   }
 
   return (

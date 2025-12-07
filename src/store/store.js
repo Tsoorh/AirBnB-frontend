@@ -4,12 +4,14 @@ import { stayReducer } from './reducers/stay.reducer'
 import { userReducer } from './reducers/user.reducer'
 import { reviewReducer } from './reducers/review.reducer'
 import { systemReducer } from './reducers/system.reducer'
+import { chatReducer } from './reducers/chat.reducer'
 
 const rootReducer = combineReducers({
     stayModule: stayReducer,
     userModule: userReducer,
     systemModule: systemReducer,
     reviewModule: reviewReducer,
+    chatModule: chatReducer
 })
 
 
