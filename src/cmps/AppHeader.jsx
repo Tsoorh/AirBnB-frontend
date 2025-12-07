@@ -51,7 +51,10 @@ export function AppHeader() {
 
 			{location.pathname !== '/become-host' &&
 				location.pathname !== '/dashboard' &&
+				location.pathname !== '/help' &&
+				location.pathname !== '/wishlist' &&
 				!location.pathname.includes('/order') &&
+				!location.pathname.includes('/host') &&
 				<StayFilter isOnViewPort={isOnViewPort} className='flex align-center'/>
 			}
 			

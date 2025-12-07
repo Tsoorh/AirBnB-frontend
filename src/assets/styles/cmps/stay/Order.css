@@ -369,3 +369,240 @@
         max-height: 60px;
     }
 }
+
+/* Style for the separated title */
+.order-title {
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+/* Responsive layout for screens 950px and below */
+@media (max-width: 950px) {
+    .order {
+        flex-direction: column;
+        align-items: center;
+        padding: 0 1rem;
+        gap: 1rem;
+    }
+
+    .back-btn {
+        order: 1;
+        align-self: flex-start;
+    }
+
+    .order-title {
+        order: 2;
+        margin-bottom: 1rem;
+        align-self: flex-start;
+    }
+
+    .order-summary {
+        order: 3;
+        margin-top: 0;
+    }
+
+    .order-steps {
+        order: 4;
+        margin-right: 0;
+    }
+
+    .step {
+        margin: 10px 0;
+    }
+}
+
+/* Responsive design for screens 745px and below */
+@media (max-width: 745px) {
+    .order {
+        padding: 0 0.75rem;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .back-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+
+    .order-title,
+    .order-steps h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .order-summary {
+        padding: 1rem;
+        margin-top: 0;
+        max-width: 100%;
+    }
+
+    .order-summary > div {
+        padding: 8px;
+    }
+
+    .order-summary h2 {
+        font-size: 0.9rem;
+    }
+
+    .order-stay-img {
+        width: 120px;
+        height: 80px;
+    }
+
+    .stay-preview-container {
+        gap: 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .refund-rule {
+        font-size: 0.75rem;
+    }
+
+    .order-dates p,
+    .order-guests p {
+        font-size: 0.85rem;
+    }
+
+    .change-btn {
+        padding: 6px 12px;
+        max-height: 30px;
+        font-size: 0.75rem;
+    }
+
+    .order-price-details div {
+        font-size: 0.85rem;
+    }
+
+    .order-total {
+        font-size: 0.9rem;
+    }
+
+    .step {
+        width: 100%;
+        max-width: 100%;
+        padding: 15px;
+        margin: 8px 0;
+        font-size: 1rem;
+    }
+
+    .payment-step,
+    .review-step {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .credit-or-debit {
+        font-size: 0.9rem;
+    }
+
+    .next-btn {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+        margin-top: 15px;
+    }
+
+    .order-btn {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+
+    .review-item {
+        padding: 0.5rem 0;
+        font-size: 0.9rem;
+    }
+
+    .review-item p,
+    .review-item span {
+        font-size: 0.9rem;
+    }
+
+    .review-status p {
+        font-size: 0.85rem;
+    }
+
+    .order-modal-content {
+        padding: 16px;
+        max-width: 95vw;
+    }
+
+    .order-modal-content h2 {
+        font-size: 1.3rem;
+        margin-top: 10px;
+    }
+
+    .order-modal-content .save-btn {
+        padding: 14px 28px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Extra small screens - 480px and below */
+@media (max-width: 480px) {
+    .order {
+        padding: 0 0.5rem;
+        gap: 0.5rem;
+    }
+
+    .back-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1.125rem;
+    }
+
+    .order-title,
+    .order-steps h1 {
+        font-size: 1.25rem;
+    }
+
+    .order-summary {
+        padding: 0.75rem;
+    }
+
+    .order-summary h2 {
+        font-size: 0.85rem;
+    }
+
+    .order-stay-img {
+        width: 100px;
+        height: 70px;
+    }
+
+    .stay-preview-container {
+        gap: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .change-btn {
+        padding: 5px 10px;
+        font-size: 0.7rem;
+    }
+
+    .step {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    .payment-step,
+    .review-step {
+        font-size: 0.9rem;
+    }
+
+    .next-btn {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+    }
+
+    .order-btn {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+    }
+
+    .order-modal-content {
+        padding: 12px;
+    }
+
+    .order-modal-content h2 {
+        font-size: 1.1rem;
+    }
+}

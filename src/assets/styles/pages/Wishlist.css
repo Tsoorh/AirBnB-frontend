@@ -1,11 +1,20 @@
 .wishlist-page {
-    padding-top: 2rem;
+    padding-top: 5rem;
     padding-bottom: 4rem;
     max-width: 1440px;
     margin: 0 auto;
-    padding-left: 2.5rem;
+    padding-left: 5rem;
     padding-right: 2.5rem;
 }
+
+.wishlist-page h1{
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #222;
+}
+
+
 
 /* Header Section */
 .wishlist-header {
@@ -272,5 +281,82 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
+    }
+}
+
+.wishlist-page .stay-image-container {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    position: relative;
+}
+
+.wishlist-page .stay-image {
+    height: 100%;
+}
+
+.wishlist-page .stay-info {
+    padding-top: 1rem;
+}
+
+.wishlist-page .stay-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.wishlist-page .stay-dates {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.wishlist-page .stay-price-rating {
+    font-size: 1.0625rem;
+    font-weight: 600;
+}
+
+.wishlist-page .stay-rating {
+    font-size: 1rem;
+}
+
+/* Adjust grid to accommodate larger stays */
+.wishlist-page .stays-horizontal-scroll {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2.5rem;
+}
+
+.wishlist-page .stay-card {
+    width: 100%;
+}
+
+@media (max-width: 1024px) {
+    .wishlist-page .stays-horizontal-scroll {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .wishlist-page .stays-horizontal-scroll {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .wishlist-page .stay-title {
+        font-size: 1rem;
+    }
+
+    .wishlist-page .stay-dates {
+        font-size: 0.9375rem;
+    }
+
+    .wishlist-page .stay-price-rating {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 550px) {
+    .wishlist-page .stays-horizontal-scroll {
+        grid-template-columns: 1fr;
     }
 }

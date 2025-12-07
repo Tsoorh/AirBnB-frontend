@@ -18,9 +18,10 @@ import { Dashboard } from './pages/Dashboard.jsx'
 import { StayEditPage } from './pages/StayEditPage'
 
 import { AppHeader } from './cmps/AppHeader'
-import { AppFooter } from './cmps/AppFooter'
+// import { AppFooter } from './cmps/AppFooter'
 import { UserMsg } from './cmps/UserMsg.jsx'
 import { Wishlist } from './pages/Wishlist.jsx'
+import { HelpCenter } from './pages/HelpCenter.jsx'
 
 
 export function RootCmp() {
@@ -40,6 +41,7 @@ export function RootCmp() {
                     <Route path="stay/:stayId" element={<StayDetails />} />
                     <Route path="stay/:stayId/photos" element={<PhotoTour />} />
                     <Route path="wishlist" element={<Wishlist />} />
+                    <Route path="help" element={<HelpCenter />} />
                     <Route path="host/:hostId" element={<HostDetails />} />
                     <Route path="user/:id" element={<UserDetails />} />
                     <Route path="review" element={<ReviewIndex />} />
@@ -51,7 +53,7 @@ export function RootCmp() {
                     <Route path="dashboard/add-listing" element={<StayEditPage />} />
                 </Routes>
             </main>
-            <AppFooter />
+            {/* <AppFooter /> */}
         </div>
     )
 }

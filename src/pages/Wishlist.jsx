@@ -69,7 +69,7 @@ import { useSelector } from 'react-redux'
 
     return (
       <div className="wishlist-page">
-        <h1>Your Wishlist</h1>
+        <h1>Wishlist</h1>
         {likedStays.length === 0 ? (
           <p>No saved stays yet. Start exploring and save your favorites!</p>
         ) : (
