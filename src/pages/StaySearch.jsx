@@ -11,14 +11,14 @@ import { useZoomLevel } from '../customHooks/useZoomLevel'
 export function StaySearch(){
     const [searchParams] = useSearchParams()
     const stays = useSelector(storeState => storeState.stayModule.stays)
-    const zoomLevel = useZoomLevel()    
+    // const zoomLevel = useZoomLevel()    
     
     // Calculate responsive stay count based on zoom level
-    const getStaysPerRow = () => {
-        return zoomLevel >= 90 ? 6 : 7
-    }
-    
-    const staysPerRow = getStaysPerRow()
+    // const getStaysPerRow = () => {
+    //     return zoomLevel >= 90 ? 6 : 7
+    // }
+
+    // const staysPerRow = getStaysPerRow()
 
     useEffect(() => {
         loadStays()
@@ -35,7 +35,6 @@ export function StaySearch(){
             <div className="results-stay-list">
                 <StayList
                     stays={stays}
-                    maxStays={staysPerRow}
                 />
             </div>
 
@@ -47,7 +46,7 @@ export function StaySearch(){
                         mapId="bf51a910020fa25a"
                         style={{ width: '100%', height: '100%' }}
                     >
-                        {stays.map((stay, index) => {
+                        {stays.map((stay) => {
                             if (!stay.loc || !stay.loc.lat || !stay.loc.lng) {
                                 console.log('Stay missing location:', stay.name)
                                 return null

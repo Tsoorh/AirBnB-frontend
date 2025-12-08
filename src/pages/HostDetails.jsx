@@ -11,9 +11,9 @@ export function HostDetails() {
   const [hostStays, setHostStays] = useState([])
   const [hostInfo, setHostInfo] = useState(null)
   const [isBioExpanded, setIsBioExpanded] = useState(false)
+  
 
   useEffect(() => {
-    // Load all stays first
     loadStays()
   }, [hostId])
 
@@ -50,7 +50,7 @@ export function HostDetails() {
     ? Math.floor((Date.now() - oldestStay.createdAt) / (1000 * 60 * 60 * 24 * 365))
     : 0
 
-  const hostAvatar = hostInfo.picture || (hostInfo.fullname ? `https://i.pravatar.cc/200?u=${encodeURIComponent(hostInfo.fullname)}` : 'https://i.pravatar.cc/200')
+  const hostAvatar = hostInfo.imgUrl || (hostInfo.fullname ? `https://i.pravatar.cc/200?u=${encodeURIComponent(hostInfo.fullname)}` : 'https://i.pravatar.cc/200')
   
   // Mock host biography
   const hostBio = hostInfo.bio || `I am a passionate host who loves providing great stays for guests. With years of experience in hospitality, I ensure every guest feels welcome and comfortable during their stay.`
