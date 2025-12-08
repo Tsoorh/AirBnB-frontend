@@ -25,7 +25,6 @@ export function StayDetails() {
   const [searchParams, setSearchParams] = useSearchParams()
   const reviewsSectionRef = useRef(null)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
-  const [isHostBioExpanded, setIsHostBioExpanded] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
   const [hostDetails, setHostDetails] = useState(null)
   const [reviewModalOpen, setReviewModalOpen] = useState(false)
@@ -51,7 +50,7 @@ export function StayDetails() {
 
   useEffect(() => {
     loadStay(stayId)
-  }, [stayId]) /// removed stay from dependencies - infinite loop
+  }, [stayId]) 
 
   // Sync isLiked state with user's liked array
   useEffect(() => {
@@ -62,6 +61,7 @@ export function StayDetails() {
       setIsLiked(false)
     }
   }, [loggedInUser, stay])
+  
 
   // Fetch detailed host information
   useEffect(() => {
@@ -94,24 +94,12 @@ export function StayDetails() {
     stay.capacity?.bathrooms && `${stay.capacity.bathrooms} ${stay.capacity.bathrooms === 1 ? 'bathroom' : 'bathrooms'}`
   ].filter(Boolean)
   // const checkOutTime = stay.checkOut?.by
-  const hostAvatar = stay.host?.picture || (stay.host?.fullname
+  const hostAvatar = stay.host?.imgUrl || (stay.host?.fullname
     ? `https://i.pravatar.cc/120?u=${encodeURIComponent(stay.host.fullname)}`
     : 'https://i.pravatar.cc/120')
 
   const yearsHosting = stay.createdAt ? Math.floor((Date.now() - stay.createdAt) / (1000 * 60 * 60 * 24 * 365)) : 0
 
-  // Mock host biography (in real app, this would come from stay.host.bio)
-  const hostBio = stay.host?.bio || `I am a passionate host who loves providing great stays for guests. With years of experience in hospitality, I ensure every guest feels welcome and comfortable during their stay.`
-  const hostBioPreview = hostBio.slice(0, 200)
-  const shouldTruncateBio = hostBio.length > 200
-  const displayedBio = !shouldTruncateBio || isHostBioExpanded ? hostBio : `${hostBioPreview}...`
-
-  // Mock co-hosts (in real app, this would come from stay.host.coHosts)
-  const coHosts = stay.host?.coHosts || []
-
-  // Mock host details
-  const responseRate = stay.host?.responseRate || 100
-  const responseTime = stay.host?.responseTime || 'within an hour'
   const amenitiesPreview = stay.amenities?.slice(0, 10) || []
   const hasMoreAmenities = (stay.amenities?.length || 0) > amenitiesPreview.length
   const descriptionPreview = stay.summary?.slice(0, 350)
@@ -127,8 +115,6 @@ export function StayDetails() {
   }
 
   async function onRemoveReview(reviewId) {
-    console.log('onRemoveReview');
-
     try {
       await removeReviewFromStay(stay, reviewId)
       loadStay(stay._id)
@@ -144,7 +130,6 @@ export function StayDetails() {
       showErrorMsg('Please login to add a review')
       return
     }
-
     try {
       const newReview = {
         _id: Date.now().toString(),
@@ -173,14 +158,10 @@ export function StayDetails() {
   // Handle date selection from calendar - both calendars can select either date
   const handleDateChange = (ev) => {
     if (!ev || ev.$D === undefined || ev.$M === undefined || ev.$y === undefined) return
-
     const { $D, $M, $y } = ev
     const pickedDateFormatted = `${$y}-${String($M + 1).padStart(2, '0')}-${String($D).padStart(2, '0')}`
-
     if (!dayjs(pickedDateFormatted).isValid()) return
-
     const newParams = new URLSearchParams(searchParams)
-
     if (!checkInParam) {
       newParams.set('checkIn', pickedDateFormatted)
     } else if (!checkOutParam) {
@@ -215,7 +196,6 @@ export function StayDetails() {
         }
       }
     }
-
     setSearchParams(newParams)
   }
 
@@ -399,7 +379,8 @@ export function StayDetails() {
               <section className="stay-highlights">
                 {stay.labels.map(label => (
                   <div key={label} className="stay-highlight-item">
-                    <p className="highlight-title">{label}</p>
+                    <p className="highlight-title">{label.title}</p>
+                    <p className="highlight-description">{label.description}</p>
                   </div>
                 ))}
               </section>
@@ -550,10 +531,8 @@ export function StayDetails() {
           <div className="meet-host-content">
             <div className="host-profile-section">
               <Link to={`/host/${stay.host._id}`} className="host-profile-card">
-                <div className="host-profile-avatar">
-                  <img src={hostAvatar} alt={`Host ${stay.host.fullname}`} />
-                </div>
-                <div className="host-profile-info">
+                <div className='host-pic'>
+                  <img className="host-profile-avatar" src={hostAvatar} alt={`Host ${stay.host.fullname}`} />
                   <h3 className="host-profile-name">{stay.host.fullname}</h3>
                   {stay.host.isSuperhost && (
                     <div className="host-profile-superhost">
@@ -561,45 +540,65 @@ export function StayDetails() {
                       <span>Superhost</span>
                     </div>
                   )}
+                </div>
                   <div className="host-profile-stats">
-                    <span className="host-stat-reviews">{stay.reviews?.length || 0} Reviews</span>
-                    <span className="host-stat-rating">
-                      <span className="host-stat-star">★</span>
-                      {formattedRating || '0'}
-                    </span>
+                    <p className="host-stat-reviews">
+                      {stay.reviews?.length || 0} 
+                      <br />
+                      <span className='describe-rate'>Reviews</span>
+                    </p>
+                    <p className="host-stat-rating">
+                      {formattedRating || '0'} ★
+                      <br />
+                      <span className='describe-rate'>Rating</span>
+                    </p>
                     {yearsHosting > 0 && (
-                      <span className="host-stat-years">{yearsHosting} Years hosting</span>
+                      <p className="host-stat-years">
+                        {yearsHosting} 
+                        <span className='describe-rate'>Years hosting</span>
+                      </p>
                     )}
-                  </div>
-                  <div className="host-profile-details">
-                    <div className="host-detail-item">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
-                        <path d="M9 21h6M12 3a6 6 0 0 1 6 6c0 2.22-1.78 4-4 4H10c-2.22 0-4-1.78-4-4a6 6 0 0 1 6-6z" />
-                        <path d="M12 7v2M12 11v2" />
-                      </svg>
-                      <span>Born in the 90s</span>
-                    </div>
-                    <div className="host-detail-item">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                      </svg>
-                      <span>Speaks English and Hebrew</span>
-                    </div>
-                  </div>
                 </div>
               </Link>
-              <div className="host-biography">
-                <p>{displayedBio}</p>
-                {shouldTruncateBio && (
-                  <button
-                    type="button"
-                    className="link-button link-button--bio"
-                    onClick={() => setIsHostBioExpanded(prev => !prev)}
-                  >
-                    {isHostBioExpanded ? 'Show less' : 'Show more'} <span className="arrow">{'>'}</span>
-                  </button>
+                <div className="host-profile-details">
+                {/* <div className="host-detail-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
+                    <path d="M9 21h6M12 3a6 6 0 0 1 6 6c0 2.22-1.78 4-4 4H10c-2.22 0-4-1.78-4-4a6 6 0 0 1 6-6z" />
+                    <path d="M12 7v2M12 11v2" />
+                  </svg>
+                  <span>Born in the 90s</span>
+                </div> */}
+
+                {hostDetails?.languages && (
+                  <div className="host-detail-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                    <span>
+                        Speaks {hostDetails.languages.length > 1 
+                        ? hostDetails.languages.slice(0, -1).join(", ") + " and " + hostDetails.languages.slice(-1)
+                        : hostDetails.languages[0]
+                      }
+                    </span>
+                  </div>
+                )}
+                {hostDetails?.work && (
+                    <div className="host-detail-item">
+                      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" width="14" height="14">
+                        <path d="M20 2a2 2 0 0 1 2 1.85V6h6a3 3 0 0 1 3 2.82V27a3 3 0 0 1-2.82 3H4a3 3 0 0 1-3-2.82V9a3 3 0 0 1 2.82-3H10V4a2 2 0 0 1 1.85-2H12zm8 6H4a1 1 0 0 0-1 .88V12a3 3 0 0 0 2.82 3H13v2H6a4.98 4.98 0 0 1-3-1v11a1 1 0 0 0 .88 1H28a1 1 0 0 0 1-.88V16c-.78.59-1.74.95-2.78 1h-7.17v-2H26a3 3 0 0 0 3-2.82V9a1 1 0 0 0-.88-1zm-10 4a1 1 0 0 1 1 .88V19a1 1 0 0 1-.88 1H14a1 1 0 0 1-1-.88V13a1 1 0 0 1 .88-1H14zm-1 2h-2v4h2zm3-10h-8v2h8z"></path>
+                      </svg>
+                      <span>
+                          My work: {hostDetails.work} 
+                      </span>
+                    </div>
                 )}
               </div>
+
+              {hostDetails?.bio && (
+                <div className="host-biography">
+                  <p>{hostDetails.bio}</p>
+                </div>
+                )}
             </div>
             <div className="host-info-section">
               {stay.host.isSuperhost && (
@@ -608,26 +607,15 @@ export function StayDetails() {
                   <p>Superhosts are experienced, highly rated hosts who are committed to providing great stays for guests.</p>
                 </div>
               )}
-              {coHosts.length > 0 && (
-                <div className="host-cohosts">
-                  <h4>Co-hosts</h4>
-                  <div className="cohosts-list">
-                    {coHosts.map((cohost, idx) => (
-                      <div key={idx} className="cohost-item">
-                        <div className="cohost-avatar">
-                          <img src={cohost.picture || `https://i.pravatar.cc/40?u=${cohost.name}`} alt={cohost.name} />
-                        </div>
-                        <span className="cohost-name">{cohost.name}</span>
-                      </div>
-                    ))}
-                  </div>
+
+            {hostDetails?.responseRate !== undefined && (
+                  <div className="host-details-info">
+                  <h4>Host details</h4>
+                  <p>Response rate: {hostDetails.responseRate}%</p>
+                  {hostDetails?.responseTime && (<p>Responds {hostDetails.responseTime}</p>)}
                 </div>
-              )}
-              <div className="host-details-info">
-                <h4>Host details</h4>
-                <p>Response rate: {responseRate}%</p>
-                <p>Responds {responseTime}</p>
-              </div>
+            )}
+
               <button type="button" className="host-message-button" onClick={onHandleMessageHost}>
                 Message host
               </button>
@@ -642,44 +630,6 @@ export function StayDetails() {
           </div>
         </section>
       )}
-
-      {/* {hostDetails && (
-        <section className="stay-meet-host">
-
-          <div>
-            <h2>Meet your host</h2>
-            <Link to={`/host/${hostDetails._id}`} >
-              <div className='meet-host-card'>
-                <div >
-                  <img className='host-profile-avatar' src={hostAvatar} alt={`Host ${hostDetails.fullname}`} />
-                  <h2>{hostDetails.fullname}</h2>
-                  {hostDetails.isSuperHost && (
-                    <span className="overview-superhost">Superhost</span>
-                  )}
-                    <h2 className="rate-host">{stay.reviews?.length}</h2>
-                    <span>Reviews</span>
-                    <h2 className="rate-host">{stay.rating.avg}</h2>
-                    <span>rating</span>
-
-                </div>
-              </div>
-            </Link>
-          </div>
-
-
-
-
-        <div>
-          {hostDetails.isSuperHost && (
-            <div className="host-superhost-info">
-              <h4>{hostDetails.fullname} is a Superhost</h4>
-              <p>Superhosts are experienced, highly rated hosts who are committed to providing great stays for guests.</p>
-            </div>
-            )}
-        </div>
-        </section>
-
-      )} */}
 
       {(stay.houseRules?.length || stay.safety?.length || stay.cancellationPolicy?.length) > 0 && (
         <section className="stay-things-to-know">
