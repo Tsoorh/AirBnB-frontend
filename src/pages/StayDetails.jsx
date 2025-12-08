@@ -373,8 +373,8 @@ export function StayDetails() {
 
             {stay.labels?.length > 0 && (
               <section className="stay-highlights">
-                {stay.labels.map(label => (
-                  <div key={label} className="stay-highlight-item">
+                {stay.labels.map((label, idx) => (
+                  <div key={`${label.title}-${idx}`} className="stay-highlight-item">
                     <p className="highlight-title">{label.title}</p>
                     <p className="highlight-description">{label.description}</p>
                   </div>
