@@ -38,6 +38,7 @@ export async function setChatId(participants) { // participants is an array of u
         const chatId = await chatService.getChatId(participants)
         console.log("🚀 ~ setChatId ~ chatId:", chatId)
         store.dispatch({type:SET_CHATID,chatId})
+        return chatId
     }catch(err){
         console.log("Couldn't get private Chat")
         throw err

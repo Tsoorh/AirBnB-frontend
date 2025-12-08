@@ -2,17 +2,19 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 
 import { socketService, SOCKET_EMIT_SEND_MSG, SOCKET_EVENT_ADD_MSG, SOCKET_EMIT_SET_TOPIC } from '../services/socket.service'
-import { useLocation } from 'react-router'
+import { useLocation, useParams } from 'react-router'
 import { chatService } from '../services/chat/chat.service'
+import Avatar from '@mui/material/Avatar'
 // import { addNewMessage } from '../store/actions/chat.actions.js'
 
 
 //ON NAVIGATING TO CHATAPP - send: chatId, participant/s with navigation.
 export function ChatApp() {
-    const [msg, setMsg] = useState({})
+    const [msg, setMsg] = useState('')
     const [msgs, setMsgs] = useState([])
     // const [isBotMode, setIsBotMode] = useState(false)
-    const chatId = useSelector(storeState => storeState.chatModule.chatId)
+    // const chatId = useSelector(storeState => storeState.chatModule.chatId) 
+    const { chatId } = useParams()
     const loggedInUser = useSelector(storeState => storeState.userModule.user)
 
     // const botTimeoutRef = useRef()
@@ -21,7 +23,7 @@ export function ChatApp() {
 
     useEffect(() => {
         getMsgHistory()
-        if(chatId) socketService.emit(SOCKET_EMIT_SET_TOPIC, chatId)
+        if (chatId) socketService.emit(SOCKET_EMIT_SET_TOPIC, chatId)
 
         socketService.on(SOCKET_EVENT_ADD_MSG, addMsg)
         return () => {
@@ -33,7 +35,7 @@ export function ChatApp() {
     async function getMsgHistory() {
         if (chatId) {
             const historyMsgs = await chatService.getMsgs(chatId)
-            setMsg(historyMsgs)
+            setMsgs(historyMsgs)
         }
     }
 
@@ -61,7 +63,7 @@ export function ChatApp() {
             text: msg,
             status: "sent",
             createdAt: new Date(),
-            updatedAd: new Date(),
+            updatedAt: new Date(),
         }
         if (chatId) newMsg.chatId = chatId;
         socketService.emit(SOCKET_EMIT_SEND_MSG, newMsg)
@@ -69,8 +71,16 @@ export function ChatApp() {
         // socketService.emit(SOCKET_EMIT_SEND_MSG, newMsg)
         // if (isBotMode) sendBotResponse()
         // for now - we add the msg ourself
-        addMsg(newMsg)
-
+        const msgToAdd = {
+            ...newMsg,
+            userDetails: {
+                _id: loggedInUser._id,
+                fullname: loggedInUser.fullname,
+                imgUrl: loggedInUser.imgUrl
+            }
+        }
+        addMsg(msgToAdd)
+        setMsg('')
     }
 
     function handleFormChange(ev) {
@@ -105,13 +115,13 @@ export function ChatApp() {
 
             <form onSubmit={sendMsg}>
                 <input
-                    type="text" value={msg.txt} onChange={handleFormChange}
+                    type="text" value={msg} onChange={handleFormChange}
                     name="txt" autoComplete="off" />
                 <button>Send</button>
             </form>
 
             <ul>
-                {/* {storedMsgs.map((msg, idx) => (<li key={idx}>{msg.from}: {msg.txt}</li>))} */}
+                {msgs.map((msg, idx) => (<li key={idx} className={`li-msg flex align-center ${(msg?.userDetails?._id === loggedInUser._id) ? 'align-left-chat' : 'align-right-chat'}`}><Avatar alt="sender-avatar" src={msg?.userDetails?.imgUrl} />{(msg?.userDetails?._id === loggedInUser._id)?msg?.userDetails?.fullname+":":":"+msg?.userDetails?.fullname} <span>{msg?.text}</span></li>))}
             </ul>
         </section>
     )

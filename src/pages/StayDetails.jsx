@@ -294,8 +294,8 @@ export function StayDetails() {
     const ownerId = stay.ownerId
     const loggedinUserId = loggedInUser._id
     const participants = [ownerId, loggedinUserId]
-    await setChatId(participants)
-    navigator(`/chat`)
+    const chatId = await setChatId(participants)
+    navigator(`/chat/${chatId}`)
   }
 
   return (
