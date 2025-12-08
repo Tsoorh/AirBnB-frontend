@@ -240,7 +240,7 @@
 
 .stay-highlights {
   border-bottom: 1px solid #dddddd;
-  padding: 24px 0;
+  padding-bottom: 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -249,7 +249,8 @@
 .stay-highlight-item {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 10px;
+  flex-direction: column;
 }
 
 /* .highlight-icon-circle {
@@ -273,15 +274,17 @@
 .highlight-title {
   margin: 0;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   color: #222222;
 }
 
-.highlight-subtitle {
+.highlight-description{
   margin: 0;
   font-size: 14px;
   color: #717171;
 }
+
+
 
 .stay-description p {
   margin: 0;

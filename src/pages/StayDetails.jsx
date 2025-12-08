@@ -114,8 +114,6 @@ export function StayDetails() {
   }
 
   async function onRemoveReview(reviewId) {
-    console.log('onRemoveReview');
-
     try {
       await removeReviewFromStay(stay, reviewId)
       loadStay(stay._id)
@@ -131,7 +129,6 @@ export function StayDetails() {
       showErrorMsg('Please login to add a review')
       return
     }
-
     try {
       const newReview = {
         _id: Date.now().toString(),
@@ -378,7 +375,8 @@ export function StayDetails() {
               <section className="stay-highlights">
                 {stay.labels.map(label => (
                   <div key={label} className="stay-highlight-item">
-                    <p className="highlight-title">{label}</p>
+                    <p className="highlight-title">{label.title}</p>
+                    <p className="highlight-description">{label.description}</p>
                   </div>
                 ))}
               </section>
