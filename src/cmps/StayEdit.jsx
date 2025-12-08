@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { addStay } from '../store/actions/stay.actions'
+import { useParams } from 'react-router-dom'
+import { addStay, updateStay } from '../store/actions/stay.actions'
 import { stayService } from '../services/stay'
 import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service'
 import { AmenityIcon } from './AmenityIcon'
@@ -22,11 +23,14 @@ const PROPERTY_TYPES = [
 ]
 
 export function StayEdit({ onSave, onCancel }) {
+    const { stayId } = useParams()
     const user = useSelector(storeState => storeState.userModule.user)
+    const [isLoading, setIsLoading] = useState(!!stayId)
     const [stay, setStay] = useState(() => {
         const emptyStay = stayService.getEmptyStay()
         return {
             ...emptyStay,
+            ownerId: user._id, // Required for backend permission checks
             host: {
                 _id: user._id,
                 fullname: user.fullname,
@@ -40,6 +44,29 @@ export function StayEdit({ onSave, onCancel }) {
     const [currentStep, setCurrentStep] = useState(0)
     const [imageUrlInput, setImageUrlInput] = useState('')
     const [unavailableDates, setUnavailableDates] = useState([{ startDate: '', endDate: '' }])
+
+    useEffect(() => {
+        if (stayId) {
+            loadStay()
+        }
+    }, [stayId])
+
+    async function loadStay() {
+        try {
+            const stayToEdit = await stayService.getById(stayId)
+            // Ensure host info is preserved or updated if needed
+            // For now, keep existing logic unless host is missing
+            setStay(stayToEdit)
+            if (stayToEdit.unavailable && stayToEdit.unavailable.length > 0) {
+                setUnavailableDates(stayToEdit.unavailable)
+            }
+        } catch (err) {
+            console.error('Failed to load stay', err)
+            showErrorMsg('Failed to load stay')
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
     const steps = [
         { id: 'basic', title: 'Basic Info', icon: '📝' },
@@ -188,8 +215,14 @@ export function StayEdit({ onSave, onCancel }) {
     }
 
     const handleSubmit = async (ev) => {
-        ev.preventDefault()
+        if (ev) ev.preventDefault()
         
+        // Double check we are on the last step
+        if (currentStep !== steps.length - 1) {
+            handleNext()
+            return
+        }
+
         if (!validateStep(currentStep)) {
             return
         }
@@ -213,16 +246,23 @@ export function StayEdit({ onSave, onCancel }) {
 
         const stayToSave = {
             ...stay,
+            ownerId: user._id, // Ensure ownerId is always set for backend compatibility
             unavailable: processedUnavailable
         }
 
         try {
-            const savedStay = await addStay(stayToSave)
-            showSuccessMsg('Stay added successfully!')
+            let savedStay
+            if (stay._id) {
+                savedStay = await updateStay(stayToSave)
+                showSuccessMsg('Stay updated successfully!')
+            } else {
+                savedStay = await addStay(stayToSave)
+                showSuccessMsg('Stay added successfully!')
+            }
             if (onSave) onSave(savedStay)
         } catch (err) {
-            showErrorMsg('Failed to add stay')
-            console.error('Error adding stay:', err)
+            showErrorMsg(stay._id ? 'Failed to update stay' : 'Failed to add stay')
+            console.error(stay._id ? 'Error updating stay:' : 'Error adding stay:', err)
         }
     }
 
@@ -666,54 +706,60 @@ export function StayEdit({ onSave, onCancel }) {
         }
     }
 
+    if (isLoading) return <div className="stay-edit-page-content">Loading...</div>
+
     return (
         <div className="stay-edit-page-content">
             <div className="stay-edit-header">
-                <h2>Create a New Listing</h2>
+                <h2>{stay._id ? 'Edit Listing' : 'Create a New Listing'}</h2>
                 {onCancel && (
                     <button className="btn-close" onClick={onCancel}>×</button>
                 )}
             </div>
 
-                <div className="steps-indicator">
-                    {steps.map((step, index) => (
-                        <div
-                            key={step.id}
-                            className={`step-indicator ${index === currentStep ? 'active' : ''} ${index < currentStep ? 'completed' : ''}`}
-                            onClick={() => {
-                                if (index <= currentStep) {
-                                    setCurrentStep(index)
-                                }
-                            }}
-                        >
-                            <span className="step-number">{index + 1}</span>
-                            <span className="step-label">{step.title}</span>
-                        </div>
-                    ))}
-                </div>
+            <div className="steps-indicator">
+                {steps.map((step, index) => (
+                    <div
+                        key={step.id}
+                        className={`step-indicator ${index === currentStep ? 'active' : ''} ${index < currentStep ? 'completed' : ''}`}
+                        onClick={() => {
+                            if (index <= currentStep) {
+                                setCurrentStep(index)
+                            }
+                        }}
+                    >
+                        <span className="step-number">{index + 1}</span>
+                        <span className="step-label">{step.title}</span>
+                    </div>
+                ))}
+            </div>
 
-                <form onSubmit={handleSubmit} className="stay-edit-form">
-                    {renderStepContent()}
+            <form className="stay-edit-form">
+                {renderStepContent()}
 
-                    <div className="form-actions">
-                        {currentStep > 0 && (
-                            <button type="button" className="btn-secondary" onClick={handlePrevious}>
-                                ← Previous
+                <div className="form-actions">
+                    {currentStep > 0 && (
+                        <button type="button" className="btn-secondary" onClick={handlePrevious}>
+                            ← Previous
+                        </button>
+                    )}
+                    <div className="actions-right">
+                        {currentStep < steps.length - 1 ? (
+                            <button type="button" className="btn-primary" onClick={handleNext}>
+                                Next →
+                            </button>
+                        ) : (
+                            <button 
+                                type="button" 
+                                className="btn-submit"
+                                onClick={handleSubmit}
+                            >
+                                {stay._id ? 'Save Changes' : 'Create Listing'}
                             </button>
                         )}
-                        <div className="actions-right">
-                            {currentStep < steps.length - 1 ? (
-                                <button type="button" className="btn-primary" onClick={handleNext}>
-                                    Next →
-                                </button>
-                            ) : (
-                                <button type="submit" className="btn-submit">
-                                    Create Listing
-                                </button>
-                            )}
-                        </div>
                     </div>
-                </form>
+                </div>
+            </form>
         </div>
     )
 }

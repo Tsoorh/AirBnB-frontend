@@ -4,9 +4,12 @@ import { useNavigate } from 'react-router-dom'
 import SecurityIcon from '@mui/icons-material/Security'
 import StarIcon from '@mui/icons-material/Star'
 import AddIcon from '@mui/icons-material/Add'
-import { loadStays } from '../store/actions/stay.actions'
+import { loadStays, removeStay } from '../store/actions/stay.actions'
 import { StayPreview } from '../cmps/StayPreview'
+import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service'
 import '../assets/styles/pages/Dashboard.css'
+import EditIcon from '@mui/icons-material/Edit'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 export function Dashboard() {
     const user = useSelector(storeState => storeState.userModule.user)
@@ -21,6 +24,18 @@ export function Dashboard() {
     useEffect(() => {
         loadStays()
     }, [])
+
+    async function onRemoveStay(stayId) {
+        if (!window.confirm('Are you sure you want to delete this listing?')) return
+
+        try {
+            await removeStay(stayId)
+            showSuccessMsg('Listing removed successfully')
+        } catch (err) {
+            console.error('Failed to remove listing:', err)
+            showErrorMsg('Failed to remove listing')
+        }
+    }
 
     if (!user) return <div>Loading...</div>
 
@@ -118,6 +133,22 @@ export function Dashboard() {
                                     {userStays.map(stay => (
                                         <div key={stay._id} className="listing-card">
                                             <StayPreview stay={stay} />
+                                            <div className="listing-actions">
+                                                <button 
+                                                    className="btn-action btn-edit"
+                                                    onClick={() => navigate(`/dashboard/edit-listing/${stay._id}`)}
+                                                    title="Edit listing"
+                                                >
+                                                    <EditIcon />
+                                                </button>
+                                                <button 
+                                                    className="btn-action btn-delete"
+                                                    onClick={() => onRemoveStay(stay._id)}
+                                                    title="Delete listing"
+                                                >
+                                                    <DeleteIcon />
+                                                </button>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>

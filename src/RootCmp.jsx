@@ -51,6 +51,7 @@ export function RootCmp() {
                     <Route path="search" element={<StaySearch />} />
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="dashboard/add-listing" element={<StayEditPage />} />
+                    <Route path="dashboard/edit-listing/:stayId" element={<StayEditPage />} />
                 </Routes>
             </main>
             {/* <AppFooter /> */}
