@@ -46,25 +46,35 @@ export function StayEdit({ onSave, onCancel }) {
     const [unavailableDates, setUnavailableDates] = useState([{ startDate: '', endDate: '' }])
 
     useEffect(() => {
+        let isMounted = true
         if (stayId) {
-            loadStay()
+            loadStay(isMounted)
+        }
+        return () => {
+            isMounted = false
         }
     }, [stayId])
 
-    async function loadStay() {
+    async function loadStay(isMounted) {
         try {
             const stayToEdit = await stayService.getById(stayId)
             // Ensure host info is preserved or updated if needed
             // For now, keep existing logic unless host is missing
-            setStay(stayToEdit)
-            if (stayToEdit.unavailable && stayToEdit.unavailable.length > 0) {
-                setUnavailableDates(stayToEdit.unavailable)
+            if (isMounted) {
+                setStay(stayToEdit)
+                if (stayToEdit.unavailable && stayToEdit.unavailable.length > 0) {
+                    setUnavailableDates(stayToEdit.unavailable)
+                }
             }
         } catch (err) {
-            console.error('Failed to load stay', err)
-            showErrorMsg('Failed to load stay')
+            if (isMounted) {
+                console.error('Failed to load stay', err)
+                showErrorMsg('Failed to load stay')
+            }
         } finally {
-            setIsLoading(false)
+            if (isMounted) {
+                setIsLoading(false)
+            }
         }
     }
 

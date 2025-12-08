@@ -50,7 +50,7 @@ export function AppHeader() {
 				</Link>
 
 			{location.pathname !== '/become-host' &&
-				location.pathname !== '/dashboard' &&
+				!location.pathname.startsWith('/dashboard') &&
 				location.pathname !== '/help' &&
 				location.pathname !== '/wishlist' &&
 				!location.pathname.includes('/order') &&
