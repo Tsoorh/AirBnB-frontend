@@ -1,21 +1,40 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import SecurityIcon from '@mui/icons-material/Security'
 import StarIcon from '@mui/icons-material/Star'
 import AddIcon from '@mui/icons-material/Add'
 import { loadStays, removeStay } from '../store/actions/stay.actions'
+import { loadOrders, updateOrderStatus } from '../store/actions/order.actions'
 import { StayPreview } from '../cmps/StayPreview'
 import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service'
 import '../assets/styles/pages/Dashboard.css'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
+
 export function Dashboard() {
     const user = useSelector(storeState => storeState.userModule.user)
     const stays = useSelector(storeState => storeState.stayModule.stays)
+    const orders = useSelector(storeState => storeState.orderModule.orders)
     const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState('about')
+    const [listingIndex, setListingIndex] = useState(0)
+    const [itemsPerPage, setItemsPerPage] = useState(3)
+
+    useEffect(() => {
+        function handleResize() {
+            if (window.innerWidth < 768) setItemsPerPage(1)
+            else if (window.innerWidth < 1060) setItemsPerPage(2)
+            else setItemsPerPage(3)
+        }
+
+        handleResize() // Init
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
 
     useEffect(() => {
         if (!user) navigate('/')
@@ -24,6 +43,12 @@ export function Dashboard() {
     useEffect(() => {
         loadStays()
     }, [])
+
+    useEffect(() => {
+        if (activeTab === 'trips' && user) {
+            loadOrders({ guestId: user._id })
+        }
+    }, [activeTab, user])
 
     async function onRemoveStay(stayId) {
         if (!window.confirm('Are you sure you want to delete this listing?')) return
@@ -35,6 +60,36 @@ export function Dashboard() {
             console.error('Failed to remove listing:', err)
             showErrorMsg('Failed to remove listing')
         }
+    }
+
+    async function onCancelOrder(orderId) {
+        if (!window.confirm('Are you sure you want to cancel this order?')) return
+        try {
+            await updateOrderStatus(orderId, 'canceled')
+            showSuccessMsg('Order canceled successfully')
+        } catch (err) {
+            console.error('Failed to cancel order:', err)
+            showErrorMsg('Failed to cancel order')
+        }
+    }
+
+    function onNextListing() {
+        setListingIndex(prevIndex => {
+            const nextIndex = prevIndex + itemsPerPage
+            return nextIndex >= userStays.length ? 0 : nextIndex
+        })
+    }
+
+    function onPrevListing() {
+        setListingIndex(prevIndex => {
+            const prev = prevIndex - itemsPerPage
+            if (prev < 0) {
+                // If we go back past the start, jump to the last "page" of items
+                const totalPages = Math.ceil(userStays.length / itemsPerPage)
+                return (totalPages - 1) * itemsPerPage
+            }
+            return prev
+        })
     }
 
     if (!user) return <div>Loading...</div>
@@ -109,7 +164,84 @@ export function Dashboard() {
                     {activeTab === 'trips' && (
                         <div className="trips-section">
                             <h2>My Trips</h2>
-                            <p>No trips booked... yet!</p>
+                            {!orders || orders.length === 0 ? (
+                                <p>No trips booked... yet!</p>
+                            ) : (
+                                <div className="trips-table-container">
+                                    <table className="trips-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Stay</th>
+                                                <th>Host</th>
+                                                <th>Dates</th>
+                                                <th>Total</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {orders
+                                                .filter(order => order && order.stay)
+                                                .map(order => {
+                                                    const isFuture = new Date(order.checkIn) > new Date()
+                                                    const canCancel = isFuture && order.status !== 'canceled' && order.status !== 'rejected'
+                                                    
+                                                    return (
+                                                <tr key={order._id}>
+                                                    <td className="stay-cell">
+                                                        <Link to={`/stay/${order.stay._id}`} className="stay-info-link">
+                                                            <div className="stay-info">
+                                                                <div className="stay-img-container">
+                                                                    {order.stay.imgUrls?.[0] || order.stay.imgUrl ? (
+                                                                        <img 
+                                                                            src={order.stay.imgUrls?.[0] || order.stay.imgUrl} 
+                                                                            alt={order.stay.name || 'Stay'} 
+                                                                        />
+                                                                    ) : (
+                                                                        <div className="placeholder-img">No Image</div>
+                                                                    )}
+                                                                </div>
+                                                                <span className="stay-name">{order.stay.name || 'Unknown Stay'}</span>
+                                                            </div>
+                                                        </Link>
+                                                    </td>
+                                                    <td className="host-cell">
+                                                        <div className="host-info">
+                                                            <img 
+                                                                src={order.host?.imgUrl || `https://i.pravatar.cc/150?u=${order.host?._id}`} 
+                                                                alt={order.host?.fullname || 'Host'} 
+                                                                className="host-avatar"
+                                                            />
+                                                            <span className="host-name">{order.host?.fullname || 'Host'}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="dates-cell">
+                                                        {new Date(order.checkIn).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(order.checkOut).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                    </td>
+                                                    <td className="total-cell">
+                                                        ${order.totalPrice?.toLocaleString()}
+                                                    </td>
+                                                    <td className="status-cell">
+                                                        <span className={`status-indicator ${order.status}`}>
+                                                            {order.status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="action-cell">
+                                                        <button 
+                                                            className="btn-cancel"
+                                                            onClick={() => onCancelOrder(order._id)}
+                                                            disabled={!canCancel}
+                                                            title={!isFuture ? "Cannot cancel past orders" : canCancel ? "Cancel this order" : "Order already canceled/rejected"}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            )})}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -129,28 +261,48 @@ export function Dashboard() {
                             {userStays.length === 0 ? (
                                 <p className="empty-listings">No listings yet. Click the + button to add your first listing!</p>
                             ) : (
-                                <div className="listings-grid">
-                                    {userStays.map(stay => (
-                                        <div key={stay._id} className="listing-card">
-                                            <StayPreview stay={stay} />
-                                            <div className="listing-actions">
-                                                <button 
-                                                    className="btn-action btn-edit"
-                                                    onClick={() => navigate(`/dashboard/edit-listing/${stay._id}`)}
-                                                    title="Edit listing"
-                                                >
-                                                    <EditIcon />
-                                                </button>
-                                                <button 
-                                                    className="btn-action btn-delete"
-                                                    onClick={() => onRemoveStay(stay._id)}
-                                                    title="Delete listing"
-                                                >
-                                                    <DeleteIcon />
-                                                </button>
+                                <div className="listings-carousel-container">
+                                    <button className="carousel-btn prev" onClick={onPrevListing} disabled={userStays.length <= itemsPerPage}>
+                                        <ArrowBackIosIcon />
+                                    </button>
+                                    
+                                    <div className="listings-carousel">
+                                        {userStays.slice(listingIndex, listingIndex + itemsPerPage).map(stay => (
+                                            <div key={stay._id} className="listing-card">
+                                                <StayPreview stay={stay} showLikeButton={false} />
+                                                <div className="listing-actions">
+                                                    <button 
+                                                        className="btn-action btn-edit"
+                                                        onClick={() => navigate(`/dashboard/edit-listing/${stay._id}`)}
+                                                        title="Edit listing"
+                                                    >
+                                                        <EditIcon />
+                                                    </button>
+                                                    <button 
+                                                        className="btn-action btn-delete"
+                                                        onClick={() => onRemoveStay(stay._id)}
+                                                        title="Delete listing"
+                                                    >
+                                                        <DeleteIcon />
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
+
+                                    <button className="carousel-btn next" onClick={onNextListing} disabled={userStays.length <= itemsPerPage}>
+                                        <ArrowForwardIosIcon />
+                                    </button>
+                                    
+                                    <div className="carousel-dots">
+                                        {Array.from({ length: Math.ceil(userStays.length / itemsPerPage) }).map((_, idx) => (
+                                            <span 
+                                                key={idx} 
+                                                className={`dot ${Math.floor(listingIndex / itemsPerPage) === idx ? 'active' : ''}`}
+                                                onClick={() => setListingIndex(idx * itemsPerPage)}
+                                            ></span>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                         </div>
