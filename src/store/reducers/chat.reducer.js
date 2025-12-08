@@ -1,10 +1,12 @@
 export const SET_CHATS = 'SET_CHATS'
+export const SET_CHATID = 'SET_CHATID'
 export const ADD_CHAT = 'ADD_CHAT'
 export const UPDATE_CHAT = 'UPDATE_CHAT'
 export const SET_CURRENT_CHAT = 'SET_CURRENT_CHAT'
 export const ADD_NEW_MSG = 'ADD_NEW_MSG'
 
 const initialState = {
+    chatId:'',
     chats: [],
     currentChat: '',
     currentMsgs: []
@@ -12,6 +14,11 @@ const initialState = {
 
 export function chatReducer(state = initialState, action) {
     switch (action.type) {
+        case SET_CHATID:
+            return {
+                ...state,
+                chatId: action.chatId
+            }
         case SET_CHATS:
             return {
                 ...state,
