@@ -99,7 +99,7 @@ export function ChatApp() {
     if(!chatId) return 'No messages to show'
     return (
         <>
-            <h2 className='user-chat'>{usersInChat}</h2>
+            {/* <h2 className='user-chat'>{usersInChat}</h2> */}
             <section className="chat">
 
                 <form onSubmit={sendMsg}>
