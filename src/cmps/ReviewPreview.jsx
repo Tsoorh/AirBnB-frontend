@@ -1,10 +1,8 @@
 import PropTypes from 'prop-types'
 
 export function ReviewPreview({ review }) {
-    const { byUser, rating } = review  
-    console.log("by user:", byUser);
-      
-
+    const { byUser } = review  
+    
     return <article className="review-preview">
         <div className="review-header">
             <div className="reviewer-info">
