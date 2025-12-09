@@ -1,0 +1,42 @@
+.messages {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    height: 100%;
+}
+
+.msg-sec {
+    position: relative;
+    overflow-y: auto;
+
+    /* justify-self: stretch; */
+    /* >h2 {
+        display: none;
+    } */
+}
+
+.chat {
+    height: 100%;
+}
+
+.chat-sec {
+    /* border: 2px solid rgba(218, 218, 218, 0.233); */
+    border-radius: 1rem;
+    >ul {
+
+        >h2 {
+            margin-left: 1rem;
+        }
+
+        >li {
+            flex-direction: column;
+            padding: 0.7rem;
+            border: 2px solid rgba(128, 128, 128, 0.233);
+            margin: 1px;
+            border-radius: 1rem;
+        }
+        >li:hover{
+            border: 3px solid black;
+            cursor: pointer;
+        }
+    }
+}

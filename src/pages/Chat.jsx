@@ -2,113 +2,117 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 
 import { socketService, SOCKET_EMIT_SEND_MSG, SOCKET_EVENT_ADD_MSG, SOCKET_EMIT_SET_TOPIC } from '../services/socket.service'
-import { useLocation } from 'react-router'
-import { addNewMessage } from '../store/actions/chat.actions.js'
+import { useLocation, useParams } from 'react-router'
+import { chatService } from '../services/chat/chat.service'
+import Avatar from '@mui/material/Avatar'
+import { userService } from '../services/user'
+// import { addNewMessage } from '../store/actions/chat.actions.js'
 
 
 //ON NAVIGATING TO CHATAPP - send: chatId, participant/s with navigation.
-export function ChatApp() { 
+export function ChatApp() {
     const [msg, setMsg] = useState('')
-    // const [msgs, setMsgs] = useState([])
-    // const [topic, setTopic] = useState('Love')
+    const [msgs, setMsgs] = useState([])
     // const [isBotMode, setIsBotMode] = useState(false)
-    const location = useLocation()
-    const chatId  = location.state?.chatId || null
-    const participant  = location.state?.participant || null
-    const storedMsgs = useSelector(storeState => storeState.chatModule.currentMsgs)
-    console.log("🚀 ~ ChatApp ~ storedMsgs:", storedMsgs)
+    // const chatId = useSelector(storeState => storeState.chatModule.chatId) 
+    const { chatId } = useParams()
+    const [usersInChat, setUsersInChat] = useState([])
     const loggedInUser = useSelector(storeState => storeState.userModule.user)
-    const botTimeoutRef = useRef()
+
+    // const botTimeoutRef = useRef()
 
 
 
     useEffect(() => {
-        // socketService.on(SOCKET_EVENT_ADD_MSG, addMsg)
+        getMsgHistory()
+        getUsersInChat()
+        if (chatId) socketService.emit(SOCKET_EMIT_SET_TOPIC, chatId)
+        socketService.on(SOCKET_EVENT_ADD_MSG, addMsg)
         return () => {
-            // socketService.off(SOCKET_EVENT_ADD_MSG, addMsg)
+            socketService.off(SOCKET_EVENT_ADD_MSG, addMsg)
             // botTimeoutRef.current && clearTimeout(botTimeoutRef.current)
         }
-    }, [])
+    }, [chatId])
 
+    async function getMsgHistory() {
+        if (chatId) {
+            const historyMsgs = await chatService.getMsgs(chatId)
+            console.log("🚀 ~ getMsgHistory ~ historyMsgs:", historyMsgs)
+            setMsgs(historyMsgs)
+        }
+    }
+    async function getUsersInChat() {
+        if (chatId) {
+            const chat = await chatService.getChatById(chatId)
+            if (!chat) return
+            console.log("🚀 ~ getUsersInChat ~ chat:", chat)
+
+            chat?.participants.forEach(async (userId) => {
+                if (loggedInUser?._id !== userId) {
+                    const user = await userService.getById(userId);
+                    setUsersInChat(user?.fullname)
+                }
+            });
+        }
+    }
     // useEffect(() => {
     // socketService.emit(SOCKET_EMIT_SET_TOPIC, topic)
     // }, [topic])
 
     function addMsg(newMsg) {
-        // setMsgs(prevMsgs => [...prevMsgs, newMsg])
+        setMsgs(prevMsgs => [...prevMsgs, newMsg])
     }
 
-    function sendBotResponse() {
-        // Handle case: send single bot response (debounce).
-        // botTimeoutRef.current && clearTimeout(botTimeoutRef.current)
-        // botTimeoutRef.current = setTimeout(() => {
-        //     setMsgs(prevMsgs => ([...prevMsgs, { from: 'Bot', txt: 'You are amazing!' }]))
-        // }, 1250)
-    }
 
     async function sendMsg(ev) {
         ev.preventDefault()
-        console.log("🚀 ~ sendMsg ~ loggedInUser:", loggedInUser)
+
         const newMsg = {
-            senderId:loggedInUser._id,
-            receiverId:[participant],
-            text:msg,
-            status:"pending",
-            createdAt:new Date(),
-            updatedAd:new Date(),
+            senderId: loggedInUser._id,
+            text: msg,
+            status: "sent",
+            createdAt: new Date(),
+            updatedAt: new Date(),
         }
-        if(chatId) newMsg.chatId = chatId;
-
-        await addNewMessage(newMsg);
-
+        if (chatId) newMsg.chatId = chatId;
+        socketService.emit(SOCKET_EMIT_SEND_MSG, newMsg)
         // const newMsg = { from, txt: msg.txt }
         // socketService.emit(SOCKET_EMIT_SEND_MSG, newMsg)
         // if (isBotMode) sendBotResponse()
         // for now - we add the msg ourself
-        // addMsg(newMsg)
-
+        const msgToAdd = {
+            ...newMsg,
+            userDetails: {
+                _id: loggedInUser._id,
+                fullname: loggedInUser.fullname,
+                imgUrl: loggedInUser.imgUrl
+            }
+        }
+        addMsg(msgToAdd)
+        setMsg('')
     }
 
     function handleFormChange(ev) {
         const { value } = ev.target
         setMsg(value)
     }
-
+    if(!chatId) return 'No messages to show'
     return (
-        <section className="chat">
-            {/* <h2>Lets Chat about {topic}</h2> */}
+        <>
+            {/* <h2 className='user-chat'>{usersInChat}</h2> */}
+            <section className="chat">
 
-            {/* <section className="chat-options">
-                <label>
-                    <input type="radio" name="topic" value="Love"
-                        checked={topic === 'Love'} onChange={({ target }) => setTopic(target.value)} />
-                    Love
-                </label>
-
-                <label>
+                <form onSubmit={sendMsg}>
                     <input
-                        type="radio" name="topic" value="Politics"
-                        checked={topic === 'Politics'} onChange={({ target }) => setTopic(target.value)} />
-                    Politics
-                </label>
+                        type="text" value={msg} onChange={handleFormChange}
+                        name="txt" autoComplete="off" />
+                    <button>Send</button>
+                </form>
 
-                <label>
-                    <input type="checkbox" name="isBotMode" checked={isBotMode}
-                        onChange={({ target }) => setIsBotMode(target.checked)} />
-                    Bot Mode
-                </label>
-            </section> */}
-
-            <form onSubmit={sendMsg}>
-                <input
-                    type="text" value={msg.txt} onChange={handleFormChange}
-                    name="txt" autoComplete="off" />
-                <button>Send</button>
-            </form>
-
-            <ul>
-                {/* {storedMsgs.map((msg, idx) => (<li key={idx}>{msg.from}: {msg.txt}</li>))} */}
-            </ul>
-        </section>
+                <ul>
+                    {msgs.map((msg, idx) => (<li key={idx} className={`li-msg flex align-center ${(msg?.userDetails?._id === loggedInUser._id) ? 'align-left-chat' : 'align-right-chat'}`}><Avatar className="chat-avatar" alt="sender-avatar" src={msg?.userDetails?.imgUrl} />{(msg?.userDetails?._id === loggedInUser._id) ? msg?.userDetails?.fullname + ":" : ":" + msg?.userDetails?.fullname} <span>{msg?.text}</span></li>))}
+                </ul>
+            </section>
+        </>
     )
 }
