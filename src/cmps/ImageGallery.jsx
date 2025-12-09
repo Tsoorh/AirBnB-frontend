@@ -1,25 +1,58 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import '../assets/styles/cmps/ImageGallery.css'
 
 export function ImageGallery({ images, alt, stayId }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [showAllPhotos, setShowAllPhotos] = useState(false)
+  const [showLightbox, setShowLightbox] = useState(false)
 
   const handleImageClick = (index) => {
     setCurrentImageIndex(index)
+    setShowLightbox(true)
   }
 
-  const handleShowAllPhotos = () => {
-    setShowAllPhotos(true)
+  const handleCloseLightbox = () => {
+    setShowLightbox(false)
   }
+
+  const handlePrevImage = (e) => {
+    e.stopPropagation()
+    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
+  }
+
+  const handleNextImage = (e) => {
+    e.stopPropagation()
+    setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
+  }
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!showLightbox) return
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setShowLightbox(false)
+      }
+      if (e.key === 'ArrowLeft') {
+        e.stopPropagation()
+        setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
+      }
+      if (e.key === 'ArrowRight') {
+        e.stopPropagation()
+        setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [showLightbox, images.length])
 
   if (!images || images.length === 0) {
     return (
       <div className="image-gallery">
         <div className="main-image-container">
-          <img 
-            src="/img/sunflowers.jpg" 
+          <img
+            src="/img/sunflowers.jpg"
             alt={alt || "No image available"}
             className="main-image"
           />
@@ -28,31 +61,46 @@ export function ImageGallery({ images, alt, stayId }) {
     )
   }
 
-  // Show modal with all photos
-  if (showAllPhotos) {
+  // Show lightbox modal with single image navigation
+  if (showLightbox) {
     return (
-      <div className="image-gallery-modal" onClick={() => setShowAllPhotos(false)}>
-        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <div className="modal-header">
-            <h2>All Photos</h2>
-            <button 
-              className="close-button"
-              onClick={() => setShowAllPhotos(false)}
+      <div className="lightbox-modal" onClick={handleCloseLightbox}>
+        <button
+          className="lightbox-close-button"
+          onClick={handleCloseLightbox}
+        >
+          X Close
+        </button>
+
+        <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+          {images.length > 1 && (
+            <button
+              className="lightbox-nav-button lightbox-prev"
+              onClick={handlePrevImage}
             >
-              ×
+              ‹
             </button>
+          )}
+
+          <div className="lightbox-image-container">
+            <img
+              src={images[currentImageIndex]}
+              alt={`${alt || 'Image'} ${currentImageIndex + 1}`}
+              className="lightbox-image"
+            />
+            <div className="lightbox-counter">
+              {currentImageIndex + 1} / {images.length}
+            </div>
           </div>
-          <div className="modal-images">
-            {images.map((imageUrl, index) => (
-              <img
-                key={index}
-                src={imageUrl}
-                alt={`${alt || 'Image'} ${index + 1}`}
-                className="modal-image"
-                onClick={() => handleImageClick(index)}
-              />
-            ))}
-          </div>
+
+          {images.length > 1 && (
+            <button
+              className="lightbox-nav-button lightbox-next"
+              onClick={handleNextImage}
+            >
+              ›
+            </button>
+          )}
         </div>
       </div>
     )
