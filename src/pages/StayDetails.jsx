@@ -378,9 +378,10 @@ export function StayDetails() {
 
             {stay.labels?.length > 0 && (
               <section className="stay-highlights">
-                {stay.labels.map(label => (
-                  <div key={label} className="stay-highlight-item">
-                    <p className="highlight-title">{label}</p>
+                {stay.labels.map((label, idx) => (
+                  <div key={`${label.title}-${idx}`} className="stay-highlight-item">
+                    <p className="highlight-title">{label.title}</p>
+                    <p className="highlight-description">{label.description}</p>
                   </div>
                 ))}
               </section>
@@ -641,7 +642,7 @@ export function StayDetails() {
                 <li>{`Check-in after ${stay.checkIn.from}`}</li>
                 <li>{`Check-in before ${stay.checkOut.by}`}</li>
                 {stay.houseRules.map((rule, idx) => (
-                  <li key={idx}>{typeof rule === 'object' ? rule.title || rule.txt : rule}</li>
+                  <li key={idx}>{rule}</li>
                 ))}
               </ul>
             </div>
@@ -649,21 +650,14 @@ export function StayDetails() {
               <h4>Safety & property</h4>
               <ul>
                 {stay.safety.map((item, idx) => (
-                  <li key={idx}>{typeof item === 'object' ? item.title || item.txt : item}</li>
+                  <li key={idx}>{item}</li>
                 ))}
               </ul>
             </div>
             <div className="thing-column">
               <h4>Cancellation policy</h4>
               <div>
-                {stay.cancellationPolicy ? (
-                  typeof stay.cancellationPolicy === 'object' ? (
-                    <>
-                      <p className="policy-title">{stay.cancellationPolicy.title}</p>
-                      <p className="policy-desc">{stay.cancellationPolicy.description}</p>
-                    </>
-                  ) : stay.cancellationPolicy
-                ) : 'ask the host'}
+                {stay.cancellationPolicy ? (stay.cancellationPolicy) : 'ask the host'}
               </div>
             </div>
           </div>
