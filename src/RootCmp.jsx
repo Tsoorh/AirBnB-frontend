@@ -22,6 +22,7 @@ import { AppHeader } from './cmps/AppHeader'
 import { UserMsg } from './cmps/UserMsg.jsx'
 import { Wishlist } from './pages/Wishlist.jsx'
 import { HelpCenter } from './pages/HelpCenter.jsx'
+import { Messages } from './pages/Messages.jsx'
 
 
 export function RootCmp() {
@@ -46,6 +47,8 @@ export function RootCmp() {
                     <Route path="user/:id" element={<UserDetails />} />
                     <Route path="review" element={<ReviewIndex />} />
                     <Route path="chat/:chatId" element={<ChatApp />} />
+                    <Route path="messages" element={<Messages />} />
+                    <Route path="messages/:chatId" element={<Messages />} />
                     <Route path="stay/:stayId/order" element={<Order />} />
                     <Route path="admin" element={<AdminIndex />} />
                     <Route path="search" element={<StaySearch />} />

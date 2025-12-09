@@ -1,4 +1,14 @@
+.user-chat{
+    display: block;
+}
 .chat {
+    display: flex;
+    flex-direction: column-reverse;
+    overflow-y: auto;
+    position: absolute;
+    inset: 0;
+    bottom: 2rem;
+    height: 80%;
     & li {
         padding-inline-start: .3em;
         font-size: .9em;
@@ -11,9 +21,24 @@
     form {
         display: flex;
         gap: 1em;
+        position: sticky;
+        bottom: 0;
+        z-index: 1;
 
         >input {
             flex-grow: 1;
+            padding: 0.5rem;
+            border-radius: var(--h-border-radius);
+            border: grey 2px solid;
+        }
+
+        >button {
+            border-radius: var(--h-border-radius);
+            padding: 0 0.8rem;
+        }
+
+        >button:hover {
+            background-color: blueviolet;
         }
     }
 }
@@ -50,7 +75,15 @@
 }
 
 .li-msg {
+    margin-top: 0.2rem;
+    z-index: 0;
+
     >span {
         font-weight: bold;
     }
+}
+
+.chat-avatar {
+    z-index: 0;
+
 }

@@ -5,13 +5,17 @@ import { httpService } from "../http.service"
 export const chatService = {
     getChats,
     getMsgs,
-    // addMsg,
+    getChatById,
     getChatId
 }
 
 //Filter contain: userId,participants,type(direct/group)
-async function getChats(filterBy) {
-    return await httpService.get(`chat`, filterBy)
+async function getChats(filterBy={}) {
+    return await httpService.post(`chat`, filterBy)
+}
+
+async function getChatById(chatId){
+    return await httpService.get(`chat/${chatId}`)
 }
 
 async function getMsgs(chatId) {
@@ -19,5 +23,5 @@ async function getMsgs(chatId) {
 }
 
 async function getChatId(participants) {
-    return await httpService.post(`chat`, participants)
+    return await httpService.post(`chat/id`, participants)
 }

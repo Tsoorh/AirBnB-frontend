@@ -54,6 +54,8 @@ export function AppHeader() {
 				location.pathname !== '/help' &&
 				location.pathname !== '/wishlist' &&
 				!location.pathname.includes('/order') &&
+				!location.pathname.includes('/chat') &&
+				!location.pathname.includes('/messages') &&
 				!location.pathname.includes('/host') &&
 				<StayFilter isOnViewPort={isOnViewPort} className='flex align-center'/>
 			}
@@ -77,7 +79,7 @@ export function AppHeader() {
 								<>
 									<Link to="/wishlist" onClick={toggleMenu}>Wishlists</Link>
 									<Link to="/trips" onClick={toggleMenu}>Trips</Link>
-									<Link to="/chat" onClick={toggleMenu}>Messages</Link>
+									<Link to="/messages" onClick={toggleMenu}>Messages</Link>
 									<Link to={`/dashboard`} onClick={toggleMenu}>Profile</Link>
 									<hr />
 									{/* <Link to="/trips" onClick={toggleMenu}>Account settings</Link> */}
