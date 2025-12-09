@@ -94,8 +94,8 @@ export function StayDetails() {
     stay.capacity?.bathrooms && `${stay.capacity.bathrooms} ${stay.capacity.bathrooms === 1 ? 'bathroom' : 'bathrooms'}`
   ].filter(Boolean)
   // const checkOutTime = stay.checkOut?.by
-  const hostAvatar = stay.host?.imgUrl || (stay.host?.fullname
-    ? `https://i.pravatar.cc/120?u=${encodeURIComponent(stay.host.fullname)}`
+  const hostAvatar = hostDetails?.imgUrl || (stay.host?.fullname
+    ? `https://i.pravatar.cc/120?u=${stay.host._id}`
     : 'https://i.pravatar.cc/120')
 
   const yearsHosting = stay.createdAt ? Math.floor((Date.now() - stay.createdAt) / (1000 * 60 * 60 * 24 * 365)) : 0
