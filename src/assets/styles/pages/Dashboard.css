@@ -500,6 +500,10 @@
     gap: 0.5rem;
 }
 
+.host-cell {
+    padding-right: 3rem !important; /* Added space to separate from Dates */
+}
+
 .host-avatar {
     width: 32px;
     height: 32px;
@@ -599,4 +603,48 @@
     cursor: not-allowed;
     background-color: #f7f7f7;
     border-color: transparent;
+}
+
+/* Approve/Reject Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.btn-approve, .btn-reject {
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-approve {
+    background-color: #222;
+    color: white;
+}
+
+.btn-approve:hover {
+    background-color: #000;
+}
+
+.btn-reject {
+    background-color: white;
+    border: 1px solid #dddddd;
+    color: #222;
+}
+
+.btn-reject:hover {
+    border-color: #000;
+    background-color: #f7f7f7;
+}
+
+.status-text-only {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #717171;
+    text-transform: capitalize;
 }

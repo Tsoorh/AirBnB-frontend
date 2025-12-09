@@ -47,6 +47,8 @@ export function Dashboard() {
     useEffect(() => {
         if (activeTab === 'trips' && user) {
             loadOrders({ guestId: user._id })
+        } else if (activeTab === 'reservations' && user) {
+            loadOrders({ hostId: user._id })
         }
     }, [activeTab, user])
 
@@ -70,6 +72,26 @@ export function Dashboard() {
         } catch (err) {
             console.error('Failed to cancel order:', err)
             showErrorMsg('Failed to cancel order')
+        }
+    }
+
+    async function onApproveOrder(orderId) {
+        try {
+            await updateOrderStatus(orderId, 'approved')
+            showSuccessMsg('Order approved successfully')
+        } catch (err) {
+            console.error('Failed to approve order:', err)
+            showErrorMsg('Failed to approve order')
+        }
+    }
+
+    async function onRejectOrder(orderId) {
+        try {
+            await updateOrderStatus(orderId, 'rejected')
+            showSuccessMsg('Order rejected successfully')
+        } catch (err) {
+            console.error('Failed to reject order:', err)
+            showErrorMsg('Failed to reject order')
         }
     }
 
@@ -222,9 +244,10 @@ export function Dashboard() {
                                                         ${order.totalPrice?.toLocaleString()}
                                                     </td>
                                                     <td className="status-cell">
-                                                        <span className={`status-indicator ${order.status}`}>
-                                                            {order.status}
-                                                        </span>
+                                                        <div className={`status-container ${order.status}`}>
+                                                            <span className={`status-dot ${order.status}`}></span>
+                                                            <span className="status-text">{order.status}</span>
+                                                        </div>
                                                     </td>
                                                     <td className="action-cell">
                                                         <button 
@@ -311,7 +334,82 @@ export function Dashboard() {
                     {activeTab === 'reservations' && (
                         <div className="reservations-section">
                             <h2>Reservations</h2>
-                            <p>No reservations yet.</p>
+                            {!orders || orders.length === 0 ? (
+                                <p>No reservations yet.</p>
+                            ) : (
+                                <div className="trips-table-container">
+                                    <table className="trips-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Guest</th>
+                                                <th>Dates</th>
+                                                <th>Stay</th>
+                                                <th>Guests</th>
+                                                <th>Total Payout</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {orders
+                                                .filter(order => order && order.guest)
+                                                .map(order => (
+                                                <tr key={order._id}>
+                                                    <td className="host-cell">
+                                                        <div className="host-info">
+                                                            <img 
+                                                                src={order.guest?.picture || `https://i.pravatar.cc/150?u=${order.guest?._id}`} 
+                                                                alt={order.guest?.fullname || 'Guest'} 
+                                                                className="host-avatar"
+                                                            />
+                                                            <span className="host-name">{order.guest?.fullname || 'Guest'}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="dates-cell">
+                                                        {new Date(order.checkIn).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(order.checkOut).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                                    </td>
+                                                    <td className="stay-cell">
+                                                        <span className="stay-name">{order.stay?.name || 'Unknown Stay'}</span>
+                                                    </td>
+                                                    <td className="total-cell">
+                                                        {order.guests?.adults + (order.guests?.children || 0)}
+                                                    </td>
+                                                    <td className="total-cell">
+                                                        ${order.totalPrice?.toLocaleString()}
+                                                    </td>
+                                                    <td className="status-cell">
+                                                        <div className={`status-container ${order.status}`}>
+                                                            <span className={`status-dot ${order.status}`}></span>
+                                                            <span className="status-text">{order.status}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="action-cell">
+                                                        {order.status === 'pending' && (
+                                                            <div className="action-buttons">
+                                                                <button 
+                                                                    className="btn-approve"
+                                                                    onClick={() => onApproveOrder(order._id)}
+                                                                >
+                                                                    Approve
+                                                                </button>
+                                                                <button 
+                                                                    className="btn-reject"
+                                                                    onClick={() => onRejectOrder(order._id)}
+                                                                >
+                                                                    Reject
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                        {order.status !== 'pending' && (
+                                                            <span className="status-text-only">{order.status}</span>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
                         </div>
                     )}
 

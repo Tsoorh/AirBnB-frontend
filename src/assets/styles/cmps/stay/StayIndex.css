@@ -53,7 +53,6 @@
     color: #222;
     margin: 0;
 }
-
 .city-title::after {
     content: "›";
     margin-left: 4px;
@@ -114,15 +113,15 @@
     padding: 48px 24px;
     color: #717171;
 }
-
 .loading-state h2,
 .empty-state h2 {
     margin: 0 0 8px 0;
     font-size: 20px;
     font-weight: 600;
 }
-
 .empty-state p {
     margin: 0;
     font-size: 16px;
 }
+
+
