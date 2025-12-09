@@ -1,10 +1,9 @@
-
 .chat {
     & li {
         padding-inline-start: .3em;
         font-size: .9em;
     }
-    
+
     li:nth-child(odd) {
         background-color: whitesmoke;
     }
@@ -13,7 +12,7 @@
         display: flex;
         gap: 1em;
 
-        > input {
+        >input {
             flex-grow: 1;
         }
     }
@@ -30,5 +29,28 @@
 
     label:last-of-type {
         margin-inline-start: auto;
+    }
+}
+
+.align-left-chat {
+    justify-content: start;
+
+    >span {
+        margin-left: 0.5rem;
+    }
+}
+
+.align-right-chat {
+    justify-content: end;
+    flex-direction: row-reverse;
+
+    >span {
+        margin-right: 0.5rem;
+    }
+}
+
+.li-msg {
+    >span {
+        font-weight: bold;
     }
 }

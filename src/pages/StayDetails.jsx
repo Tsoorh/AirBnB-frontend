@@ -15,7 +15,8 @@ import { updateStay } from '../store/actions/stay.actions'
 import { userService } from '../services/user'
 import dayjs from 'dayjs'
 import { AddReviewModal } from '../cmps/modals/AddReviewModal'
-import { findAndSetPrivateChat } from '../store/actions/chat.actions.js'
+import { setChatId } from '../store/actions/chat.actions'
+
 
 export function StayDetails() {
   const loggedInUser = useSelector(storeState => storeState.userModule.user)
@@ -290,8 +291,11 @@ export function StayDetails() {
   //Send message to host 
 
   async function onHandleMessageHost() {
-    const chatId =await findAndSetPrivateChat(stay.ownerId, loggedInUser)
-    navigator(`/chat`, { state: { participant: stay.ownerId, chatId: chatId } })
+    const ownerId = stay.ownerId
+    const loggedinUserId = loggedInUser._id
+    const participants = [ownerId, loggedinUserId]
+    const chatId = await setChatId(participants)
+    navigator(`/chat/${chatId}`)
   }
 
   return (
