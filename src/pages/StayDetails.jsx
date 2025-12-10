@@ -16,6 +16,7 @@ import { userService } from '../services/user'
 import dayjs from 'dayjs'
 import { AddReviewModal } from '../cmps/modals/AddReviewModal'
 import { setChatId } from '../store/actions/chat.actions'
+import { StayDetailsSkeleton } from '../cmps/Skeletons'
 
 
 export function StayDetails() {
@@ -79,9 +80,8 @@ export function StayDetails() {
   }, [stay?.host?._id])
 
   if (!stay) {
-    return <div className="stay-details-loading">Loading...</div>
+      return <StayDetailsSkeleton />
   }
-
 
   const formattedRating = stay.rating?.avg
     ? Number(stay.rating?.avg).toFixed(2).replace(/\.0+$/, '').replace(/\.(\d)0$/, '.$1')
@@ -298,6 +298,12 @@ export function StayDetails() {
     console.log("🚀 ~ onHandleMessageHost ~ chatId:", chatId)
     navigator(`/chat/${chatId}`)
   }
+
+
+
+  // if (!stay) {
+  //     return <StayDetailsSkeleton />
+  // }
 
   return (
     <div className="stay-details">
