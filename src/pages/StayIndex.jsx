@@ -48,7 +48,7 @@ export function StayIndex() {
     }
 
 
-    // Group stays by city
+    // Group stays by city and sort by rating
     const staysByCity = stays.reduce((acc, stay) => {
         const city = stay.loc?.city || 'Unknown'
         acc[city] = acc[city] || []
@@ -56,10 +56,18 @@ export function StayIndex() {
         return acc
     }, {})
 
+    // Sort stays within each city by rating (highest first)
+    Object.keys(staysByCity).forEach(city => {
+        staysByCity[city].sort((a, b) => {
+            const ratingA = a.rating?.avg || 0
+            const ratingB = b.rating?.avg || 0
+            return ratingB - ratingA 
+        })
+    })
+
     // Get unique cities and limit to 6 rows
     const cities = Object.keys(staysByCity).slice(0, 6)
 
-    // Show loading or empty state
     if (!stays?.length) {
         return (
             <section className="stay-index">

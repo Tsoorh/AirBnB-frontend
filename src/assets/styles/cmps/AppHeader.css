@@ -7,13 +7,13 @@
     align-items: center;
     min-height: 5rem;
     background: linear-gradient(180deg, #ffffff 39.9%, #f0f0f0 100%);
-    padding: 1rem 2rem;
+    padding: 2rem 70px;
     >.logo {
         display: flex;
         align-items:center;
         cursor: pointer;
         & img {
-            max-height: 2.5rem;
+            max-height: 2.3rem;
         }
         & span{
             font-size: 24px;
@@ -68,14 +68,17 @@
 
 .side-menu {
     position: fixed;
-    top: 80px;
-    right: 30px;
+    top: 90px;
+    right: 70px;
     width: 300px;
     background-color: white;
     border-radius: 1rem ;
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
     z-index: 1000;
+    font-weight: 500;
 }
+
+
 
 @keyframes slideIn {
     from {
@@ -97,7 +100,7 @@
     padding: 0.35rem 1rem;
     text-decoration: none;
     color: #222;
-    font-size: 0.825rem;
+    font-size: 0.9rem;
     border: none;
     background: none;
     text-align: left;

@@ -166,9 +166,6 @@ export function BookingWidget() {
 
         <p className="no-charge-text">You won&apos;t be charged yet</p>
       </div>
-
-      {/* Report Link */}
-      <a href="#" className="report-listing-link">Report this listing</a>
     </div>
   )
 }

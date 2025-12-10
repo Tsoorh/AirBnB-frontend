@@ -177,15 +177,6 @@
   margin-bottom: 16px;
 }
 
-/* Report Link */
-.report-listing-link {
-  display: block;
-  text-align: center;
-  font-size: 14px;
-  color: #717171;
-  text-decoration: underline;
-  margin-top: 24px;
-}
 
 .report-listing-link:hover {
   color: #222222;

@@ -3,7 +3,7 @@
     grid-template-columns: repeat(2, 1fr); /* Default for mobile */
     gap: 16px;
     overflow-x: visible;
-    padding: 8px 8px 16px 8px;
+    /* padding: 8px 8px 16px 8px; */
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE and Edge */
     width: 100%;

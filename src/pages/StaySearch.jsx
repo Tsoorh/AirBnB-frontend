@@ -1,33 +1,29 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { loadStays } from "../store/actions/stay.actions"
 import { useSearchParams } from 'react-router-dom'
 import { useSelector } from "react-redux"
 import { StayList } from "../cmps/StayList"
 import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps';
-import { useZoomLevel } from '../customHooks/useZoomLevel'
 
 
 
 export function StaySearch(){
     const [searchParams] = useSearchParams()
     const stays = useSelector(storeState => storeState.stayModule.stays)
-    // const zoomLevel = useZoomLevel()    
-    
-    // Calculate responsive stay count based on zoom level
-    // const getStaysPerRow = () => {
-    //     return zoomLevel >= 90 ? 6 : 7
-    // }
-
-    // const staysPerRow = getStaysPerRow()
+    const [mapCenter, setMapCenter] = useState({ lat: 32.0853, lng: 34.7818 })
+    const [mapZoom, setMapZoom] = useState(8)
 
     useEffect(() => {
         loadStays()
     },[searchParams])
 
-    // Calculate center based on first stay or default to Tel Aviv
-    const mapCenter = stays.length > 0 && stays[0].loc
-        ? { lat: stays[0].loc.lat, lng: stays[0].loc.lng }
-        : { lat: 32.0853, lng: 34.7818 }
+    // Update map center and zoom when stays change
+    useEffect(() => {
+        if (stays.length > 0 && stays[0].loc) {
+            setMapCenter({ lat: stays[0].loc.lat, lng: stays[0].loc.lng })
+            setMapZoom(12) // Zoom in closer when filtering by city
+        }
+    }, [stays])
         
         
     return(
@@ -41,8 +37,8 @@ export function StaySearch(){
             <div className="map-container">
                 <APIProvider apiKey={import.meta.env.VITE_GMAP_KEY}>
                     <Map
-                        defaultCenter={mapCenter}
-                        defaultZoom={8}
+                        center={mapCenter}
+                        zoom={mapZoom}
                         mapId="bf51a910020fa25a"
                         style={{ width: '100%', height: '100%' }}
                     >
