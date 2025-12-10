@@ -37,7 +37,6 @@ export function ChatApp() {
     async function getMsgHistory() {
         if (chatId) {
             const historyMsgs = await chatService.getMsgs(chatId)
-            console.log("🚀 ~ getMsgHistory ~ historyMsgs:", historyMsgs)
             setMsgs(historyMsgs)
         }
     }
