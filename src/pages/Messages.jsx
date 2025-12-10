@@ -9,6 +9,7 @@ import { Avatar } from "@adobe/react-spectrum"
 
 export function Messages() {
     const [chatList, setChatList] = useState([])
+    const [currentChat, setCurrentChat] = useState(null)
     const loggedInUser = useSelector(storeState => storeState.userModule.user)
     const {chatId} = useParams()
     const navigate = useNavigate()
@@ -43,8 +44,13 @@ export function Messages() {
         setChatList(finalChats)
     }
 
+    useEffect(()=>{
+        const currentUrlChat = chatList.find(chat=>chat._id === chatId)
+        setCurrentChat(currentUrlChat?.participantsData[0]?.fullname || "")
+    },[chatId,chatList])
 
-    function onChooseChat(chatId) {
+
+    function onChooseChat(chatId,chatFullname) {
         navigate(`/messages/${chatId}`)
     }
 
@@ -59,8 +65,8 @@ export function Messages() {
                     {(!chatList) ? 'No chats to display' :
                         chatList.map((chat, idx) => {
                             if (!chat.lastMessage.text) return null
-                            return <li key={idx} className={`flex ${chatId===chat._id?'active':''}`} onClick={() => onChooseChat(chat._id)}>
-                                <img className="img-url" src={chat.participantsData[0]?.imgUrl} />
+                            return <li key={idx} className={`flex ${chatId===chat._id?'active':''}`} onClick={() => onChooseChat(chat._id,chat?.participantsData[0]?.fullname)}>
+                                <img className="img-url" src={chat.participantsData[0]?.imgUrl} /> 
                                 <div className="flex column">
                                     <span className="chat-with">{chat?.participantsData[0]?.fullname} </span>
                                     <span className="last-message">{chat?.lastMessage?.text}</span>
@@ -71,7 +77,7 @@ export function Messages() {
                 </ul>
             </div>
             <div className="msg-header">
-                <h3>chat fullname</h3>
+                <h3>{currentChat}</h3>
             </div>
             <div className="msg-sec">
                 <ChatApp />

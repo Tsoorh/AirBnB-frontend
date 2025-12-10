@@ -44,7 +44,6 @@ export function ChatApp() {
         if (chatId) {
             const chat = await chatService.getChatById(chatId)
             if (!chat) return
-            console.log("🚀 ~ getUsersInChat ~ chat:", chat)
 
             chat?.participants.forEach(async (userId) => {
                 if (loggedInUser?._id !== userId) {
@@ -115,3 +114,4 @@ export function ChatApp() {
         </>
     )
 }
+
