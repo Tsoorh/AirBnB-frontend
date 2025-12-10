@@ -18,7 +18,7 @@ import { Dashboard } from './pages/Dashboard.jsx'
 import { StayEditPage } from './pages/StayEditPage'
 
 import { AppHeader } from './cmps/AppHeader'
-// import { AppFooter } from './cmps/AppFooter'
+import { AppFooter } from './cmps/AppFooter'
 import { UserMsg } from './cmps/UserMsg.jsx'
 import { Wishlist } from './pages/Wishlist.jsx'
 import { HelpCenter } from './pages/HelpCenter.jsx'
@@ -57,7 +57,7 @@ export function RootCmp() {
                     <Route path="dashboard/edit-listing/:stayId" element={<StayEditPage />} />
                 </Routes>
             </main>
-            {/* <AppFooter /> */}
+            <AppFooter />
         </div>
     )
 }
