@@ -46,7 +46,7 @@ export function AppHeader() {
 		<div ref={observeRef}></div>
 		<header className="app-header full wrap ">
 				<Link to="/" className='logo not-mobile-item'>
-					<img src='/img/urbnb-icon.png' alt="Airbnb" /><span>urbnb</span>
+					<img src='/img/urbnb-icon.png' alt="Urbnb" /><span>urbnb</span>
 				</Link>
 
 			{location.pathname !== '/become-host' &&
