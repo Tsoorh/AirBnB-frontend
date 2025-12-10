@@ -16,6 +16,7 @@ import { userService } from '../services/user'
 import dayjs from 'dayjs'
 import { AddReviewModal } from '../cmps/modals/AddReviewModal'
 import { setChatId } from '../store/actions/chat.actions'
+import { StayDetailsSkeleton } from '../cmps/Skeletons'
 
 
 export function StayDetails() {
@@ -79,9 +80,8 @@ export function StayDetails() {
   }, [stay?.host?._id])
 
   if (!stay) {
-    return <div className="stay-details-loading">Loading...</div>
+      return <StayDetailsSkeleton />
   }
-
 
   const formattedRating = stay.rating?.avg
     ? Number(stay.rating?.avg).toFixed(2).replace(/\.0+$/, '').replace(/\.(\d)0$/, '.$1')
@@ -299,6 +299,12 @@ export function StayDetails() {
     navigator(`/chat/${chatId}`)
   }
 
+
+
+  // if (!stay) {
+  //     return <StayDetailsSkeleton />
+  // }
+
   return (
     <div className="stay-details">
       <header className="stay-details-header">
@@ -369,7 +375,7 @@ export function StayDetails() {
               )}
 
               <div className="overview-text">
-                <h2>{stay.host ? `Hosted by ${stay.host.fullname}` : 'Hosted by Airbnb Host'}</h2>
+                <h2>{stay.host ? `Hosted by ${stay.host.fullname}` : 'Hosted by Urbnb Host'}</h2>
                 {stay.host?.isSuperhost && (
                   <span className="overview-superhost">Superhost</span>
                 )}
@@ -625,7 +631,7 @@ export function StayDetails() {
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                   <path d="M9 12l2 2 4-4" />
                 </svg>
-                <span>To help protect your payment, always use Airbnb to send money and communicate with hosts.</span>
+                <span>To help protect your payment, always use Urbnb to send money and communicate with hosts.</span>
               </div>
             </div>
           </div>

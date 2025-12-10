@@ -13,7 +13,7 @@ export function AppFooter() {
 		<footer className="app-footer full">
 			<div className="footer-content">
 				<div className="footer-left">
-					<p>© 2024 Airbnb Clone</p>
+					<p>© 2024 Urbnb Clone</p>
 					<span className="separator">·</span>
 					<a href="/terms">Terms</a>
 					<span className="separator">·</span>

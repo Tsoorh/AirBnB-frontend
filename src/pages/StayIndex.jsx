@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { loadStays } from '../store/actions/stay.actions'
 import { StayList } from '../cmps/StayList'
+import { StayIndexSkeleton } from '../cmps/Skeletons'
 
 export function StayIndex() {
     const stays = useSelector(storeState => storeState.stayModule.stays)
@@ -69,14 +70,7 @@ export function StayIndex() {
     const cities = Object.keys(staysByCity).slice(0, 6)
 
     if (!stays?.length) {
-        return (
-            <section className="stay-index">
-                <div className="empty-state">
-                    <h2>{!stays ? "Loading stays..." : "No stays available"}</h2>
-                    {stays && <p>Check back later for new listings</p>}
-                </div>
-            </section>
-        )
+        return <StayIndexSkeleton staysPerRow={staysPerRow} rows={6} />
     }
 
     return (
