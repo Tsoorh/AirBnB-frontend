@@ -60,7 +60,7 @@ export function AppHeader() {
 				<StayFilter isOnViewPort={isOnViewPort} className='flex align-center'/>
 			}
 			
-			<div className='flex align-center not-mobile-item'>
+			<div className="header-right">
 				{ user && (
 					<button className='btn-account' onClick={() => navigate('/dashboard')}>{`${user.fullname[0]}`}</button>
 				)}
@@ -82,17 +82,10 @@ export function AppHeader() {
 									<Link to="/messages" onClick={toggleMenu}>Messages</Link>
 									<Link to={`/dashboard`} onClick={toggleMenu}>Profile</Link>
 									<hr />
-									{/* <Link to="/trips" onClick={toggleMenu}>Account settings</Link> */}
-									{/* <Link to="/trips" onClick={toggleMenu}>Languages & currency</Link> */}
-									{/* <hr /> */}
 								</>
 							)}
 
 						<Link to="/help" onClick={toggleMenu}>Help Center</Link>
-						{/* <hr /> */}
-							{/* <Link to="" onClick={toggleMenu}>Refer a host</Link> */}
-							{/* <Link to="" onClick={toggleMenu}>Find a co-host</Link> */}
-							{/* <Link to="" onClick={toggleMenu}>Gift cards</Link> */}
 							<hr />
 							{user ? (
 								<button onClick={() => { onLogout(); toggleMenu(); }}>Log out</button>

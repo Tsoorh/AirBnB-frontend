@@ -185,13 +185,13 @@ export function StayFilter({ isOnViewPort }) {
   }
 
   function handleGuests() {
-    if (!filter.guests) return "add guests";
+    if (!filter.guests) return "Add guests";
 
     const guestsEntries = Object.entries(filter.guests)
       .filter(([_, value]) => value > 0)
       .map(([key, value]) => `${key}: ${value}`);
 
-    return guestsEntries.length > 0 ? guestsEntries.join(", ") : "add guests";
+    return guestsEntries.length > 0 ? guestsEntries.join(", ") : "Add guests";
   }
 
   function onResetFilter() {
@@ -296,6 +296,7 @@ export function StayFilter({ isOnViewPort }) {
               <span className="search-text">Search</span>
             </div>
           </button>
+          
 
           {isModalOpen && (
             <DynamicModalCmp
