@@ -31,7 +31,9 @@ export function StayDetails() {
   const photosRef = useRef(null)
   const amenitiesRef = useRef(null)
   const locationRef = useRef(null)
+  const reserveBtnRef = useRef(null)
   const [isNavBarVisible, setIsNavBarVisible] = useState(false)
+  const [isReserveBtnInHeaderVisible, setIsReserveBtnInHeaderVisible] = useState(false)
 
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
@@ -89,18 +91,35 @@ export function StayDetails() {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsNavBarVisible(!entry.isIntersecting && entry.boundingClientRect.top < 0)
+      (entries) => {
+        entries.forEach(entry => {
+            if (entry.target === photosRef.current) {
+                // NavBar should show when photos are scrolled past top
+                setIsNavBarVisible(!entry.isIntersecting && entry.boundingClientRect.top <= 0)
+            }
+        })
       },
-      { threshold: 0, rootMargin: "-80px 0px 0px 0px" } // Offset for better triggering
+      { threshold: 0, rootMargin: "-80px 0px 0px 0px" } 
+    )
+
+    const reserveObserver = new IntersectionObserver(
+        (entries) => {
+            entries.forEach(entry => {
+                if (entry.target === reserveBtnRef.current) {
+                    // Reserve button in header shows when the main button scrolls up out of view
+                    setIsReserveBtnInHeaderVisible(!entry.isIntersecting && entry.boundingClientRect.top < 0)
+                }
+            })
+        },
+        { threshold: 0 }
     )
     
-    if (photosRef.current) {
-      observer.observe(photosRef.current)
-    }
+    if (photosRef.current) observer.observe(photosRef.current)
+    if (reserveBtnRef.current) reserveObserver.observe(reserveBtnRef.current)
 
     return () => {
         if (photosRef.current) observer.unobserve(photosRef.current)
+        if (reserveBtnRef.current) reserveObserver.unobserve(reserveBtnRef.current)
     }
   }, [stay]) // Re-run when stay loads and refs are populated
 
@@ -346,6 +365,10 @@ export function StayDetails() {
 
 
 
+  const handleReserveClick = () => {
+    reserveBtnRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
   // if (!stay) {
   //     return <StayDetailsSkeleton />
   // }
@@ -356,7 +379,7 @@ export function StayDetails() {
         <div className="header-main">
           <h1 className="stay-title">{stay.name}</h1>
         </div>
-
+        
         <div className="header-actions">
           <button type="button" className="header-action-link">
             <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -375,7 +398,14 @@ export function StayDetails() {
         </div>
       </header>
 
-      <StayDetailsNavBar sections={navSections} visible={isNavBarVisible} />
+      <StayDetailsNavBar 
+        sections={navSections} 
+        visible={isNavBarVisible} 
+        showReserve={isReserveBtnInHeaderVisible}
+        stay={stay}
+        onReserveClick={handleReserveClick}
+        orderParams={{ nights }}
+      />
 
       <div ref={photosRef}>
         <ImageGallery images={stay.imgUrls} alt={stay.name} stayId={stay._id} />
@@ -530,7 +560,7 @@ export function StayDetails() {
           </div>
         </div>
         <aside className="stay-sidebar">
-          <BookingWidget />
+          <BookingWidget reserveBtnRef={reserveBtnRef} />
         </aside>
       </div>
 

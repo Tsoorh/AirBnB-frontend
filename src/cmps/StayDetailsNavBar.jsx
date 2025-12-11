@@ -1,6 +1,6 @@
 import React from 'react'
 
-export function StayDetailsNavBar({ sections, visible }) {
+export function StayDetailsNavBar({ sections, visible, showReserve, stay, onReserveClick, orderParams }) {
     
     function onScrollToSection(ref) {
         if (ref.current) {
@@ -9,6 +9,10 @@ export function StayDetailsNavBar({ sections, visible }) {
             window.scrollTo({ top: y, behavior: 'smooth' });
         }
     }
+    
+    const nights = orderParams?.nights || 0
+    const priceDisplay = stay?.price?.base ? `₪${stay.price.base}` : ''
+    const subText = nights > 0 ? `for ${nights} ${nights === 1 ? 'night' : 'nights'}` : 'for 1 night'
 
     return (
         <div className={`stay-details-navbar ${visible ? 'visible' : ''}`}>
@@ -24,6 +28,26 @@ export function StayDetailsNavBar({ sections, visible }) {
                         </button>
                     ))}
                 </nav>
+
+                {showReserve && stay && (
+                    <div className="navbar-reserve">
+                        <div className="navbar-reserve-info">
+                            <div className="navbar-price-container">
+                                <span className="price">{priceDisplay}</span>
+                                <span className="period">{subText}</span>
+                            </div>
+                            <div className="navbar-rating">
+                                <span className="star">★</span>
+                                <span className="rating">{stay.rating?.avg}</span>
+                                <span className="rating-separator">{'\u00b7'}</span>
+                                <span className="reviews">{stay.reviews?.length} reviews</span>
+                            </div>
+                        </div>
+                        <button className="navbar-reserve-btn" onClick={onReserveClick}>
+                            Reserve
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     )
