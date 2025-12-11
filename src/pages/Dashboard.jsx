@@ -358,7 +358,7 @@ export function Dashboard() {
                                                     <td className="host-cell">
                                                         <div className="host-info">
                                                             <img 
-                                                                src={order.guest?.picture || `https://i.pravatar.cc/150?u=${order.guest?._id}`} 
+                                                                src={order.guest?.imgUrl || `https://i.pravatar.cc/150?u=${order.guest?._id}`} 
                                                                 alt={order.guest?.fullname || 'Guest'} 
                                                                 className="host-avatar"
                                                             />
