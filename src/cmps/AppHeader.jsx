@@ -17,6 +17,8 @@ export function AppHeader() {
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 	const [isOnViewPort, observeRef] = useObserver();
 
+	const isStayDetails = location.pathname.startsWith('/stay/') && !location.pathname.includes('/order')
+
 	async function onLogout() {
 		try {
 			await logout()
@@ -44,7 +46,7 @@ export function AppHeader() {
 	return (
 		<>
 		<div ref={observeRef}></div>
-		<header className="app-header full wrap ">
+		<header className={`app-header full wrap ${isStayDetails ? 'static-header' : ''}`}>
 				<Link to="/" className='logo not-mobile-item'>
 					<img src='/img/urbnb-icon.png' alt="Urbnb" /><span>urbnb</span>
 				</Link>
@@ -57,7 +59,7 @@ export function AppHeader() {
 				!location.pathname.includes('/chat') &&
 				!location.pathname.includes('/messages') &&
 				!location.pathname.includes('/host') &&
-				<StayFilter isOnViewPort={isOnViewPort} className='flex align-center'/>
+				<StayFilter isOnViewPort={isOnViewPort} isStayDetails={isStayDetails} className='flex align-center'/>
 			}
 			
 			<div className="header-right">
