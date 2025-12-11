@@ -46,9 +46,9 @@ export default defineConfig({
         ]
       },
       manifest: {
-        name: 'Airbnb Clone',
-        short_name: 'Airbnb',
-        description: 'Find and book unique accommodations',
+        name: 'Urbnb - Vacation Rentals',
+        short_name: 'Urbnb',
+        description: 'Find and book unique accommodations around the world',
         theme_color: '#FF385C',
         background_color: '#ffffff',
         display: 'standalone',
