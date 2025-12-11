@@ -295,8 +295,7 @@ export function StayDetails() {
     const loggedinUserId = loggedInUser._id
     const participants = [ownerId, loggedinUserId]
     const chatId = await setChatId(participants)
-    console.log("🚀 ~ onHandleMessageHost ~ chatId:", chatId)
-    navigator(`/chat/${chatId}`)
+    navigator(`/messages/${chatId}`)
   }
 
 

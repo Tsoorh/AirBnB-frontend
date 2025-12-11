@@ -10,7 +10,7 @@ import { userService } from '../services/user'
 
 
 //ON NAVIGATING TO CHATAPP - send: chatId, participant/s with navigation.
-export function ChatApp() {
+export function ChatApp({onSendMsg}) {
     const [msg, setMsg] = useState('')
     const [msgs, setMsgs] = useState([])
     // const [isBotMode, setIsBotMode] = useState(false)
@@ -87,6 +87,7 @@ export function ChatApp() {
             }
         }
         addMsg(msgToAdd)
+        if(onSendMsg) onSendMsg(msgToAdd,chatId)
         setMsg('')
     }
 

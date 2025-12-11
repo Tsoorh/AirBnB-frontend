@@ -33,7 +33,6 @@ export function Messages() {
                 })
 
             const participantsData = await Promise.all(participantDataPromises)
-
             return {
                 ...chat,
                 participantsData
@@ -45,13 +44,28 @@ export function Messages() {
     }
 
     useEffect(()=>{
-        const currentUrlChat = chatList.find(chat=>chat._id === chatId)
+        const currentUrlChat = chatList?.find(chat=>chat._id === chatId)
         setCurrentChat(currentUrlChat?.participantsData[0]?.fullname || "")
     },[chatId,chatList])
 
 
-    function onChooseChat(chatId,chatFullname) {
+    function onChooseChat(chatId) {
         navigate(`/messages/${chatId}`)
+    }
+
+    function onSendMsg(newMsg,chatId){
+        const {text,userDetails,updateAt} = newMsg;
+        const {fullname} = userDetails;
+        setChatList(prevChatList=>{
+            const newChatList = prevChatList.map(chat=>{
+                if(chat._id===chatId){
+                    return {...chat,lastMessage:{text:text,createdAt:updateAt}}
+                }else{
+                    return chat
+                }
+            })
+            return newChatList
+        })
     }
 
 
@@ -64,7 +78,7 @@ export function Messages() {
                 <ul>
                     {(!chatList) ? 'No chats to display' :
                         chatList.map((chat, idx) => {
-                            if (!chat.lastMessage.text) return null
+                            if (!chat.lastMessage.text && chatId!==chat._id) return null
                             return <li key={idx} className={`flex ${chatId===chat._id?'active':''}`} onClick={() => onChooseChat(chat._id,chat?.participantsData[0]?.fullname)}>
                                 <img className="img-url" src={chat.participantsData[0]?.imgUrl} /> 
                                 <div className="flex column">
@@ -80,7 +94,7 @@ export function Messages() {
                 <h3>{currentChat}</h3>
             </div>
             <div className="msg-sec">
-                <ChatApp />
+                <ChatApp  onSendMsg={onSendMsg}/>
             </div>
         </section>
     )
