@@ -14,7 +14,7 @@
 
 .dashboard-container {
     display: grid;
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 250px 1fr;
     gap: 4rem;
 }
 
@@ -382,12 +382,14 @@
 .trips-table-container {
     overflow-x: auto;
     overflow-y: auto;
-    max-height: 500px;
+    /* max-height: 500px; */
     margin-top: 1rem;
     border: 1px solid #dddddd;
     border-radius: 12px;
     padding: 0;
+    position: relative;
 }
+
 
 /* Custom Scrollbar for Webkit browsers */
 .trips-table-container::-webkit-scrollbar {
@@ -648,4 +650,34 @@
     font-weight: 500;
     color: #717171;
     text-transform: capitalize;
+}
+
+/* Responsive Table Optimization for screens under 1660px */
+@media (max-width: 1660px) {
+    .dashboard-page{
+        margin: 0 2.2rem;
+
+    }
+
+    .trips-table {
+        min-width: 900px; /* Slightly wider to ensure readability */
+    }
+
+    .trips-table th,
+    .trips-table td {
+        padding: 0.75rem; /* Slightly reduce padding */
+    }
+
+    .stay-cell {
+        min-width: 220px; /* Slightly narrower */
+    }
+
+    .trips-table .stay-img-container {
+        width: 70px;
+        height: 52px;
+    }
+
+    .host-cell {
+        padding-right: 2rem !important;
+    }
 }

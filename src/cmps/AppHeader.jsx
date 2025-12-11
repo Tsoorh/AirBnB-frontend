@@ -62,7 +62,16 @@ export function AppHeader() {
 			
 			<div className="header-right">
 				{ user && (
-					<button className='btn-account' onClick={() => navigate('/dashboard')}>{`${user.fullname[0]}`}</button>
+					<button className='btn-account' onClick={() => navigate('/dashboard')}>
+						{user.imgUrl ? (
+							<img
+								src={user.imgUrl}
+								alt={user.fullname}
+							/>
+						) : (
+							user.fullname[0]
+						)}
+					</button>
 				)}
 				<button className='btn-menu' onClick={toggleMenu}><MenuIcon/></button>
 			</div>

@@ -132,7 +132,25 @@
     border-radius: 50%;
     height: 40px;
     width: 40px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 0;
 }
+
+.btn-account img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
 
 .header-right{
     display: flex;

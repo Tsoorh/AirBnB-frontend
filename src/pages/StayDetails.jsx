@@ -17,6 +17,7 @@ import dayjs from 'dayjs'
 import { AddReviewModal } from '../cmps/modals/AddReviewModal'
 import { setChatId } from '../store/actions/chat.actions'
 import { StayDetailsSkeleton } from '../cmps/Skeletons'
+import { orderService } from '../services/order'
 
 
 export function StayDetails() {
@@ -130,7 +131,20 @@ export function StayDetails() {
       showErrorMsg('Please login to add a review')
       return
     }
+
     try {
+      // Check if user has a completed order for this stay
+      const userOrders = await orderService.query({ guestId: loggedInUser._id })
+      const hasCompletedOrder = userOrders.some(order =>
+        order.stay._id === stay._id &&
+        order.status === 'completed'
+      )
+
+      if (!hasCompletedOrder) {
+        showErrorMsg('You can only review stays you have completed bookings for')
+        return
+      }
+
       const newReview = {
         _id: Date.now().toString(),
         txt: reviewData.text,
