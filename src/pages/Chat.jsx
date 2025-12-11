@@ -10,7 +10,7 @@ import { userService } from '../services/user'
 
 
 //ON NAVIGATING TO CHATAPP - send: chatId, participant/s with navigation.
-export function ChatApp({onSendMsg}) {
+export function ChatApp({ onSendMsg }) {
     const [msg, setMsg] = useState('')
     const [msgs, setMsgs] = useState([])
     // const [isBotMode, setIsBotMode] = useState(false)
@@ -74,10 +74,6 @@ export function ChatApp({onSendMsg}) {
         }
         if (chatId) newMsg.chatId = chatId;
         socketService.emit(SOCKET_EMIT_SEND_MSG, newMsg)
-        // const newMsg = { from, txt: msg.txt }
-        // socketService.emit(SOCKET_EMIT_SEND_MSG, newMsg)
-        // if (isBotMode) sendBotResponse()
-        // for now - we add the msg ourself
         const msgToAdd = {
             ...newMsg,
             userDetails: {
@@ -87,7 +83,7 @@ export function ChatApp({onSendMsg}) {
             }
         }
         addMsg(msgToAdd)
-        if(onSendMsg) onSendMsg(msgToAdd,chatId)
+        if (onSendMsg) onSendMsg(msgToAdd, chatId)
         setMsg('')
     }
 
@@ -95,7 +91,7 @@ export function ChatApp({onSendMsg}) {
         const { value } = ev.target
         setMsg(value)
     }
-    if(!chatId) return 'No messages to show'
+    if (!chatId) return 'No messages to show'
     return (
         <>
             {/* <h2 className='user-chat'>{usersInChat}</h2> */}
@@ -104,12 +100,19 @@ export function ChatApp({onSendMsg}) {
                 <form onSubmit={sendMsg}>
                     <input
                         type="text" value={msg} onChange={handleFormChange}
-                        name="txt" autoComplete="off" />
+                        name="txt" autoComplete="off" autoFocus="on" placeholder='Enter your message'/>
                     <button>Send</button>
                 </form>
 
                 <ul>
-                    {msgs.map((msg, idx) => (<li key={idx} className={`li-msg flex align-center ${(msg?.userDetails?._id === loggedInUser._id) ? 'align-left-chat' : 'align-right-chat'}`}><Avatar className="chat-avatar" alt="sender-avatar" src={msg?.userDetails?.imgUrl} />{(msg?.userDetails?._id === loggedInUser._id) ? msg?.userDetails?.fullname + ":" : ":" + msg?.userDetails?.fullname} <span>{msg?.text}</span></li>))}
+                    {msgs.map((msg, idx) => (
+                        <li key={idx} className={`li-msg flex align-center ${(msg?.userDetails?._id === loggedInUser._id) ? 'align-left-chat' : 'align-right-chat'}`}>
+                            <Avatar className="chat-avatar" alt="sender-avatar" sx={{width:24,height:24}} src={msg?.userDetails?.imgUrl} />
+                            <div className='flex column msg-container'>
+                                <span className='fullname-chat'><b>{msg?.userDetails?.fullname}</b></span>
+                                <span>{msg?.text}</span>
+                            </div>
+                        </li>))}
                 </ul>
             </section>
         </>

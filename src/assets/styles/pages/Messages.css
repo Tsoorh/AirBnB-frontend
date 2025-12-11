@@ -30,7 +30,7 @@
 
         >li {
             padding: 1rem;
-            border: 1px solid rgba(199, 199, 199, 0.411);
+            /* border:- 1px solid rgba(199, 199, 199, 0.411); */
             border-radius: 10px;
         }
 
@@ -45,7 +45,7 @@
     grid-area: 1/2/2/3;
     padding-top: 1rem;
     padding-left: 1rem;
-    border-bottom: 1px lightgray solid;
+    border-bottom: 1px rgb(211, 211, 211) solid;
 
 }
 
@@ -54,21 +54,28 @@
     overflow-y: auto;
     padding-right: 1rem;
     padding-left: 0.8rem;
+    background-color: #dddddd49;
 }
 
 .active {
     background-color: rgba(199, 199, 199, 0.137);
+    border-left: 4px solid #FF385C;
 }
 
 .chat-with {
     font-size: large;
 }
 
-.last-message {}
 
 .img-url {
     height: 50px;
     width: 50px;
     border-radius: 50%;
     margin-right: 0.5rem;
+}
+
+.last-message{
+    max-width: 15rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

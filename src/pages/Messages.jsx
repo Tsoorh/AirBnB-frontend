@@ -20,11 +20,13 @@ export function Messages() {
 
     async function loadChats() {
         const chats = await chatService.getChats({ userId: loggedInUser._id })
+        console.log("🚀 ~ loadChats ~ chats:", chats)
 
         const formattedChatPromises = chats.map(async (chat) => {
             const participantDataPromises = chat.participants
                 .filter(pid => pid !== loggedInUser._id)
                 .map(async (pid) => {
+                    if(!pid) return null
                     const user = await userService.getById(pid)
                     return {
                         fullname: user.fullname,
