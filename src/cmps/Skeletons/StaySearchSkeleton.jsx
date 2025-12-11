@@ -8,7 +8,9 @@ export function StaySearchSkeleton({ itemsCount = 20 }) {
                 <div className="stays-horizontal-scroll" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))' }}>
                     {Array.from({ length: itemsCount }).map((_, idx) => (
                         <div key={idx} className="stay-card">
-                            <Skeleton height={180} borderRadius={12} />
+                            <div style={{ width: '100%', aspectRatio: '1 / 1' }}>
+                                <Skeleton height="100%" borderRadius={12} />
+                            </div>
                             <Skeleton width="60%" height={20} style={{ marginTop: 12 }} />
                             <Skeleton width="40%" height={16} style={{ marginTop: 8 }} />
                             <Skeleton width="30%" height={16} style={{ marginTop: 8 }} />

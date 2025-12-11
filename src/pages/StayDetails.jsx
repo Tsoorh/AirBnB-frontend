@@ -17,6 +17,8 @@ import dayjs from 'dayjs'
 import { AddReviewModal } from '../cmps/modals/AddReviewModal'
 import { setChatId } from '../store/actions/chat.actions'
 import { StayDetailsSkeleton } from '../cmps/Skeletons'
+import { orderService } from '../services/order'
+import { StayDetailsNavBar } from '../cmps/StayDetailsNavBar'
 
 
 export function StayDetails() {
@@ -24,7 +26,15 @@ export function StayDetails() {
   const { stayId } = useParams()
   const stay = useSelector(storeState => storeState.stayModule.stay)
   const [searchParams, setSearchParams] = useSearchParams()
+  
   const reviewsSectionRef = useRef(null)
+  const photosRef = useRef(null)
+  const amenitiesRef = useRef(null)
+  const locationRef = useRef(null)
+  const reserveBtnRef = useRef(null)
+  const [isNavBarVisible, setIsNavBarVisible] = useState(false)
+  const [isReserveBtnInHeaderVisible, setIsReserveBtnInHeaderVisible] = useState(false)
+
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
   const [hostDetails, setHostDetails] = useState(null)
@@ -79,9 +89,50 @@ export function StayDetails() {
     fetchHostDetails()
   }, [stay?.host?._id])
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+            if (entry.target === photosRef.current) {
+                // NavBar should show when photos are scrolled past top
+                setIsNavBarVisible(!entry.isIntersecting && entry.boundingClientRect.top <= 0)
+            }
+        })
+      },
+      { threshold: 0, rootMargin: "-80px 0px 0px 0px" } 
+    )
+
+    const reserveObserver = new IntersectionObserver(
+        (entries) => {
+            entries.forEach(entry => {
+                if (entry.target === reserveBtnRef.current) {
+                    // Reserve button in header shows when the main button scrolls up out of view
+                    setIsReserveBtnInHeaderVisible(!entry.isIntersecting && entry.boundingClientRect.top < 0)
+                }
+            })
+        },
+        { threshold: 0 }
+    )
+    
+    if (photosRef.current) observer.observe(photosRef.current)
+    if (reserveBtnRef.current) reserveObserver.observe(reserveBtnRef.current)
+
+    return () => {
+        if (photosRef.current) observer.unobserve(photosRef.current)
+        if (reserveBtnRef.current) reserveObserver.unobserve(reserveBtnRef.current)
+    }
+  }, [stay]) // Re-run when stay loads and refs are populated
+
   if (!stay) {
       return <StayDetailsSkeleton />
   }
+
+  const navSections = [
+    { id: 'photos', label: 'Photos', ref: photosRef },
+    { id: 'amenities', label: 'Amenities', ref: amenitiesRef },
+    { id: 'reviews', label: 'Reviews', ref: reviewsSectionRef },
+    { id: 'location', label: 'Location', ref: locationRef },
+  ]
 
   const formattedRating = stay.rating?.avg
     ? Number(stay.rating?.avg).toFixed(2).replace(/\.0+$/, '').replace(/\.(\d)0$/, '.$1')
@@ -130,7 +181,20 @@ export function StayDetails() {
       showErrorMsg('Please login to add a review')
       return
     }
+
     try {
+      // Check if user has a completed order for this stay
+      const userOrders = await orderService.query({ guestId: loggedInUser._id })
+      const hasCompletedOrder = userOrders.some(order =>
+        order.stay._id === stay._id &&
+        order.status === 'completed'
+      )
+
+      if (!hasCompletedOrder) {
+        showErrorMsg('You can only review stays you have completed bookings for')
+        return
+      }
+
       const newReview = {
         _id: Date.now().toString(),
         txt: reviewData.text,
@@ -300,6 +364,10 @@ export function StayDetails() {
 
 
 
+  const handleReserveClick = () => {
+    reserveBtnRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
   // if (!stay) {
   //     return <StayDetailsSkeleton />
   // }
@@ -310,7 +378,7 @@ export function StayDetails() {
         <div className="header-main">
           <h1 className="stay-title">{stay.name}</h1>
         </div>
-
+        
         <div className="header-actions">
           <button type="button" className="header-action-link">
             <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -329,7 +397,18 @@ export function StayDetails() {
         </div>
       </header>
 
-      <ImageGallery images={stay.imgUrls} alt={stay.name} stayId={stay._id} />
+      <StayDetailsNavBar 
+        sections={navSections} 
+        visible={isNavBarVisible} 
+        showReserve={isReserveBtnInHeaderVisible}
+        stay={stay}
+        onReserveClick={handleReserveClick}
+        orderParams={{ nights }}
+      />
+
+      <div ref={photosRef}>
+        <ImageGallery images={stay.imgUrls} alt={stay.name} stayId={stay._id} />
+      </div>
 
       <div className="stay-main-content">
         <div className="stay-details-content">
@@ -408,7 +487,7 @@ export function StayDetails() {
             )}
 
             {stay.amenities?.length > 0 && (
-              <section className="stay-amenities">
+              <section className="stay-amenities" ref={amenitiesRef}>
                 <h3>What this place offers</h3>
                 <div className="stay-amenities-grid">
                   {amenitiesPreview.map(amenity => (
@@ -480,7 +559,7 @@ export function StayDetails() {
           </div>
         </div>
         <aside className="stay-sidebar">
-          <BookingWidget />
+          <BookingWidget reserveBtnRef={reserveBtnRef} />
         </aside>
       </div>
 
@@ -507,7 +586,7 @@ export function StayDetails() {
       {reviewModalOpen && (<AddReviewModal hadleSumitReview={hadleSumitReview} handleCloseReviewModal={handleCloseReviewModal} />)}
 
       {stay.loc && (
-        <section className="stay-location">
+        <section className="stay-location" ref={locationRef}>
           <h2>Where you&apos;ll be</h2>
           <div className="stay-location-content">
             <div className="stay-location-text">

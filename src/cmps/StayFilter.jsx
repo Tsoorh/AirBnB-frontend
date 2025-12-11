@@ -11,7 +11,7 @@ import { MobileDates } from "./FilterCmps/MobileDates";
 import { GuestsPicker } from "./FilterCmps/GuestsPicker";
 import { useNavigate } from "react-router";
 
-export function StayFilter({ isOnViewPort }) {
+export function StayFilter({ isOnViewPort, isStayDetails }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [mobileFilterSelection, setMobileFilterSelection] = useState({
@@ -68,12 +68,17 @@ export function StayFilter({ isOnViewPort }) {
 
   useEffect(() => {
     if (width > 745) {
-      if (isOnViewPort) setIsFilterOpen(false);
-      else setIsFilterOpen(true);
+      if (isStayDetails) {
+        setIsFilterOpen(false)
+      } else if (isOnViewPort) {
+        setIsFilterOpen(false)
+      } else {
+        setIsFilterOpen(true)
+      }
     } else {
       setIsFilterOpen(false);
     }
-  }, [isOnViewPort]);
+  }, [isOnViewPort, width, isStayDetails]);
 
   useEffect(() => {
     if (width > 745) {

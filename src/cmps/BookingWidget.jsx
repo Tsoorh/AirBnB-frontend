@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router'
 
 
 
-export function BookingWidget() {
+export function BookingWidget({ reserveBtnRef }) {
   const stay = useSelector(storeState => storeState.stayModule.stay)
   const [searchParams, setSearchParams] = useSearchParams()
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false)
@@ -161,6 +161,7 @@ export function BookingWidget() {
         </Link> */}
 
         <button 
+          ref={reserveBtnRef}
           className="reserve-button"
           onClick={handleReserve}>Reserve</button>
 

@@ -124,7 +124,7 @@ export function Dashboard() {
         { id: 'trips', label: 'My Trips', icon: null },
         { id: 'listings', label: 'My Listings', icon: null },
         { id: 'reservations', label: 'Reservations', icon: null },
-        { id: 'stats', label: 'Statistics', icon: null },
+        // { id: 'stats', label: 'Statistics', icon: null },
     ]
 
     return (
@@ -353,6 +353,11 @@ export function Dashboard() {
                                         <tbody>
                                             {orders
                                                 .filter(order => order && order.guest)
+                                                .sort((a, b) => {
+                                                    // Sort: pending first, then approved/rejected, completed last
+                                                    const statusOrder = { 'pending': 0, 'approved': 1, 'rejected': 1, 'completed': 2 }
+                                                    return (statusOrder[a.status] || 1) - (statusOrder[b.status] || 1)
+                                                })
                                                 .map(order => (
                                                 <tr key={order._id}>
                                                     <td className="host-cell">
@@ -413,12 +418,12 @@ export function Dashboard() {
                         </div>
                     )}
 
-                    {activeTab === 'stats' && (
+                    {/* {activeTab === 'stats' && (
                         <div className="stats-section">
                             <h2>Statistics</h2>
                             <p>Coming soon...</p>
                         </div>
-                    )}
+                    )} */}
                 </main>
             </div>
         </div>
