@@ -18,6 +18,7 @@ import { AddReviewModal } from '../cmps/modals/AddReviewModal'
 import { setChatId } from '../store/actions/chat.actions'
 import { StayDetailsSkeleton } from '../cmps/Skeletons'
 import { orderService } from '../services/order'
+import { StayDetailsNavBar } from '../cmps/StayDetailsNavBar'
 
 
 export function StayDetails() {
@@ -25,7 +26,13 @@ export function StayDetails() {
   const { stayId } = useParams()
   const stay = useSelector(storeState => storeState.stayModule.stay)
   const [searchParams, setSearchParams] = useSearchParams()
+  
   const reviewsSectionRef = useRef(null)
+  const photosRef = useRef(null)
+  const amenitiesRef = useRef(null)
+  const locationRef = useRef(null)
+  const [isNavBarVisible, setIsNavBarVisible] = useState(false)
+
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
   const [hostDetails, setHostDetails] = useState(null)
@@ -80,9 +87,33 @@ export function StayDetails() {
     fetchHostDetails()
   }, [stay?.host?._id])
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsNavBarVisible(!entry.isIntersecting && entry.boundingClientRect.top < 0)
+      },
+      { threshold: 0, rootMargin: "-80px 0px 0px 0px" } // Offset for better triggering
+    )
+    
+    if (photosRef.current) {
+      observer.observe(photosRef.current)
+    }
+
+    return () => {
+        if (photosRef.current) observer.unobserve(photosRef.current)
+    }
+  }, [stay]) // Re-run when stay loads and refs are populated
+
   if (!stay) {
       return <StayDetailsSkeleton />
   }
+
+  const navSections = [
+    { id: 'photos', label: 'Photos', ref: photosRef },
+    { id: 'amenities', label: 'Amenities', ref: amenitiesRef },
+    { id: 'reviews', label: 'Reviews', ref: reviewsSectionRef },
+    { id: 'location', label: 'Location', ref: locationRef },
+  ]
 
   const formattedRating = stay.rating?.avg
     ? Number(stay.rating?.avg).toFixed(2).replace(/\.0+$/, '').replace(/\.(\d)0$/, '.$1')
@@ -344,7 +375,11 @@ export function StayDetails() {
         </div>
       </header>
 
-      <ImageGallery images={stay.imgUrls} alt={stay.name} stayId={stay._id} />
+      <StayDetailsNavBar sections={navSections} visible={isNavBarVisible} />
+
+      <div ref={photosRef}>
+        <ImageGallery images={stay.imgUrls} alt={stay.name} stayId={stay._id} />
+      </div>
 
       <div className="stay-main-content">
         <div className="stay-details-content">
@@ -423,7 +458,7 @@ export function StayDetails() {
             )}
 
             {stay.amenities?.length > 0 && (
-              <section className="stay-amenities">
+              <section className="stay-amenities" ref={amenitiesRef}>
                 <h3>What this place offers</h3>
                 <div className="stay-amenities-grid">
                   {amenitiesPreview.map(amenity => (
@@ -522,7 +557,7 @@ export function StayDetails() {
       {reviewModalOpen && (<AddReviewModal hadleSumitReview={hadleSumitReview} handleCloseReviewModal={handleCloseReviewModal} />)}
 
       {stay.loc && (
-        <section className="stay-location">
+        <section className="stay-location" ref={locationRef}>
           <h2>Where you&apos;ll be</h2>
           <div className="stay-location-content">
             <div className="stay-location-text">

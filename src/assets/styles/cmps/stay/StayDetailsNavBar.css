@@ -1,0 +1,72 @@
+
+/* Stay Details Navigation Bar */
+.stay-details-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background-color: white;
+    border-bottom: 1px solid #dddddd;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden; /* Use visibility instead of opacity/transform for no animation */
+}
+
+.stay-details-navbar.visible {
+    visibility: visible;
+}
+
+.navbar-inner {
+    max-width: 1120px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.navbar-links {
+    display: flex;
+    gap: 24px;
+    height: 100%;
+}
+
+.navbar-link {
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: #222222;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease;
+}
+
+.navbar-link:hover {
+    color: #000000;
+}
+
+.navbar-link:hover::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: #000000;
+}
+
+@media (max-width: 745px) {
+    .stay-details-navbar {
+        display: none; /* Hide on mobile usually */
+    }
+}
+
