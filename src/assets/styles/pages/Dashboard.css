@@ -382,7 +382,7 @@
 .trips-table-container {
     overflow-x: auto;
     overflow-y: auto;
-    /* max-height: 500px; */
+    max-height: 500px;
     margin-top: 1rem;
     border: 1px solid #dddddd;
     border-radius: 12px;
