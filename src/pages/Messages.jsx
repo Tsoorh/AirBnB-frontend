@@ -81,7 +81,7 @@ export function Messages() {
                     {(!chatList) ? 'No chats to display' :
                         chatList.map((chat, idx) => {
                             if (!chat.lastMessage.text && chatId!==chat._id) return null
-                            return <li key={idx} className={`flex ${chatId===chat._id?'active':''}`} onClick={() => onChooseChat(chat._id,chat?.participantsData[0]?.fullname)}>
+                            return <li key={idx} className={`flex ${chatId===chat._id?'active-chat':''}`} onClick={() => onChooseChat(chat._id,chat?.participantsData[0]?.fullname)}>
                                 <img className="img-url" src={chat.participantsData[0]?.imgUrl} /> 
                                 <div className="flex column chat-info">
                                     <span className="chat-with">{chat?.participantsData[0]?.fullname} </span>

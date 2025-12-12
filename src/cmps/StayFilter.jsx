@@ -296,12 +296,15 @@ export function StayFilter({ isOnViewPort, isStayDetails }) {
                 e.stopPropagation();
                 onSearchClick(e);
               }}
+              onMouseDown={(e) => {
+                e.stopPropagation();
+              }}
             >
-              <SearchIcon />
-              <span className="search-text">Search</span>
+              <SearchIcon sx={{ fontSize: "1.7rem" }} />
+              <span className="search-text" style={{ pointerEvents: "none" }}>Search</span>
             </div>
           </button>
-          
+
 
           {isModalOpen && (
             <DynamicModalCmp
@@ -317,7 +320,7 @@ export function StayFilter({ isOnViewPort, isStayDetails }) {
     );
   } else {
     return (
-      <section className="stay-filter close shadow wide ">
+      <section className="stay-filter close shadow wide">
         <input
           type="text"
           className="mobile-only-item search-mobile"

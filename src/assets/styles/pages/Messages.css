@@ -57,7 +57,7 @@
     display: grid;
 }
 
-.active {
+.active-chat {
     background-color: rgba(199, 199, 199, 0.137);
     border-left: 4px solid #FF385C;
 }

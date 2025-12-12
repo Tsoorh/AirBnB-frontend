@@ -232,7 +232,7 @@ SearchIcon {
     
 
     &.search-sml {
-        padding: 20px;
+        padding: 1.6rem;
     }
 }
 
@@ -248,12 +248,12 @@ SearchIcon {
 }
 
 .search-btn:hover {
-    background-color: var(--search-svg-bgc-bright);
+    background: var(--btn-color-hover);
 }
 
 .search-btn.open {
     width: 6rem;
-    padding: 20px 10px;
+    padding: 25px 10px;
     border-radius: var(--h-border-radius);
     transition: width 0.3s ease, background-color 0.2s ease, border-radius 0.3s ease;
     background-color: var(--search-svg-bgc-dark);
@@ -266,5 +266,10 @@ SearchIcon {
 
 .search-btn.open .search-text {
     display: inline;
+}
+
+
+button.filter-btn.open.flex.row{
+    padding-right: 0.5rem;
 }
 
