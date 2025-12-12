@@ -91,7 +91,7 @@ export function ChatApp({ onSendMsg }) {
         const { value } = ev.target
         setMsg(value)
     }
-    if (!chatId) return 'No messages to show'
+    if (!chatId) return <span className='not-chat-msg'>Choose chat to show</span>
     return (
         <>
             {/* <h2 className='user-chat'>{usersInChat}</h2> */}

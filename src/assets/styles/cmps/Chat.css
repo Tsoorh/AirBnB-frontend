@@ -5,7 +5,9 @@
 .chat {
     display: flex;
     flex-direction: column-reverse;
-    overflow-y: auto;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     width: 100%;
     height: 100%;
 
@@ -20,7 +22,7 @@
 
     form {
         display: flex;
-        gap: 1em;
+        /* gap: 1em; */
         position: sticky;
         bottom: 0;
         z-index: 1;
@@ -30,13 +32,12 @@
             padding: 0.5rem;
             border-radius: 0.8rem;
             border: none;
-            background-color: #c4c4c4;
-            
+            background-color: #d6d6d6;
         }
 
         >input:focus {
             outline: none;
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.418);
         }
 
         >button {
@@ -49,6 +50,10 @@
             background-color: #d72f4e;
         }
     }
+}
+
+.chat::-webkit-scrollbar {
+  display: none;
 }
 
 .chat-options {
@@ -70,7 +75,7 @@
 
     >.msg-container {
 
-        background-color: #fcff606e;
+        background-color: #e0e0e0;
         margin-left: 0.3rem;
     }
 
@@ -84,7 +89,7 @@
     flex-direction: row-reverse;
 
     >.msg-container {
-        background-color: #8eabf849;
+        background-color: #78dd7483;
         margin-right: 0.3rem;
         text-align: end;
     }
@@ -119,4 +124,9 @@
     position: relative;
     top: -0.2rem;
     font-size: smaller;
+}
+
+.not-chat-msg{
+    place-self: center;
+    color: gray;
 }

@@ -9,6 +9,17 @@ body {
     /* color: var(--clr2); */
     font-weight: 400; 
 }
+
+
+/* hide scrollbar */
+/* html{
+    overflow-y: scroll; 
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar{
+    display: none;
+} */
 html,body{
     overflow-x: clip;
 }

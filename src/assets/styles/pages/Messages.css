@@ -7,7 +7,6 @@
     margin-right: 2.3rem;
     overflow: hidden;
 }
-
 .chat-header {
     grid-area: 1/1/2/2;
     padding-top: 1rem;
@@ -54,7 +53,8 @@
     overflow-y: auto;
     padding-right: 1rem;
     padding-left: 0.8rem;
-    background-color: #dddddd49;
+    background-color: #cfcfcf49;
+    display: grid;
 }
 
 .active {
@@ -63,7 +63,11 @@
 }
 
 .chat-with {
-    font-size: large;
+    font-size: small;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 15rem;
 }
 
 
@@ -74,8 +78,69 @@
     margin-right: 0.5rem;
 }
 
-.last-message{
+.last-message {
     max-width: 15rem;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+@media (max-width:1060px) {
+
+    .last-message,
+    .chat-with {
+        max-width: 10rem;
+    }
+}
+
+@media (max-width:860px) {
+
+    .last-message,
+    .chat-with {
+        max-width: 8rem;
+    }
+}
+
+@media (max-width:745px) {
+    main {
+        width: 95vw;
+    }
+
+    .messages {
+        grid-template-columns: 4rem 1fr;
+        grid-template-rows: 1fr;
+        margin: 0;
+    }
+
+    .chat-header,
+    .chat-with,
+    .last-message {
+        display: none;
+    }
+
+    .active {
+        border: 3px solid #FF385C;
+    }
+
+    .chat-sec {
+        >ul {
+            >li {
+                padding: 0;
+                border-radius: 50%;
+                width: 53px;
+            }
+        }
+    }
+
+    .img-url {
+        margin-right: 0;
+    }
+
+    .chat-info {
+        height: 0;
+        width: 0;
+    }
+
+    .msg-sec {
+        height: 75vh;
+    }
 }
