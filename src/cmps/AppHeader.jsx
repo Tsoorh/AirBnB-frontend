@@ -8,6 +8,7 @@ import { StayFilter } from './StayFilter'
 import MenuIcon from '@mui/icons-material/Menu';
 import { LoginSignupModal } from './LoginSignupModal';
 import { useObserver } from "../customHooks/useObserver";
+import { useWindowSize } from '../customHooks/useWindowSize'
 
 export function AppHeader() {
 	const location = useLocation()
@@ -16,6 +17,7 @@ export function AppHeader() {
 	const navigate = useNavigate()
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 	const [isOnViewPort, observeRef] = useObserver();
+	const {width} = useWindowSize()
 
 	const isStayDetails = location.pathname.startsWith('/stay/') && !location.pathname.includes('/order')
 
@@ -65,6 +67,7 @@ export function AppHeader() {
 					<StayFilter isOnViewPort={isOnViewPort} isStayDetails={isStayDetails} className='flex align-center' />
 				}
 				{!noFilterLocation&&
+				(width<815)&&
 				<Link to="/" className='logo mobile-only'>
 					<img src='/img/urbnb-icon.png' alt="Urbnb" />
 				</Link>

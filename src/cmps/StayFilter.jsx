@@ -68,7 +68,7 @@ export function StayFilter({ isOnViewPort, isStayDetails }) {
   }, [filter]);
 
   useEffect(() => {
-    if (width > 745) {
+    if (width > 815) {
       if (isStayDetails) {
         setIsFilterOpen(false)
       } else if (isOnViewPort) {
@@ -82,11 +82,11 @@ export function StayFilter({ isOnViewPort, isStayDetails }) {
   }, [isOnViewPort, width, isStayDetails]);
 
   useEffect(() => {
-    if (width > 745) {
+    if (width > 815) {
       setMobileFilterOpen(false);
     } else {
       setIsFilterOpen(false);
-      setMobileFilterOpen(true);
+      // setMobileFilterOpen(true);
     }
   }, [width]);
 
@@ -176,7 +176,7 @@ export function StayFilter({ isOnViewPort, isStayDetails }) {
   }
 
   function handleCityChange(city) {
-    if (width < 745) setMobileFilterSelection(prev => ({ ...prev, destination: false }));
+    if (width < 815) setMobileFilterSelection(prev => ({ ...prev, destination: false }));
     setFilter((prev) => ({ ...prev, city }));
   }
 
