@@ -128,7 +128,7 @@ export function SearchDestination({ handleChange, isOpen, onCloseModal }) {
           placeholder="Search destinations (city or country)"
           value={query}
           onChange={e => setQuery(e.target.value)}
-          className="input"
+          className="dest-input"
           autoComplete="off"
         />
 
