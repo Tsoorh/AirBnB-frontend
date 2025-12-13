@@ -142,7 +142,7 @@ export function SearchDestination({ handleChange, isOpen, onCloseModal }) {
           ref={listRef}
           role="listbox"
           aria-label="Destination suggestions"
-          className="suggestions"
+          className="suggestions  custom-scroll"
         >
           {results.map((c, idx) => {
             const isActive = idx === activeIdx;
