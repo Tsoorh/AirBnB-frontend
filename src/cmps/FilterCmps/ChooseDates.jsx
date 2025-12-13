@@ -55,7 +55,7 @@ export function ChooseDates({ handleChange, onCloseModal }) {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <div className="modal-calendar-container " ref={wrapperRef}>
+      <div className="modal-calendar-container" ref={wrapperRef}>
         <div className="flex justify-center align-center">
           <div className="calendar-container">
             {/* <span>Check in</span> */}
