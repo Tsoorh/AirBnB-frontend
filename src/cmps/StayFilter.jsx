@@ -10,6 +10,7 @@ import { SearchDestination } from "./FilterCmps/SearchDestination";
 import { MobileDates } from "./FilterCmps/MobileDates";
 import { GuestsPicker } from "./FilterCmps/GuestsPicker";
 import { useNavigate } from "react-router";
+import CloseIcon from '@mui/icons-material/Close';
 
 export function StayFilter({ isOnViewPort, isStayDetails }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -221,7 +222,7 @@ export function StayFilter({ isOnViewPort, isStayDetails }) {
           className="x-btn shadow"
           onClick={() => setMobileFilterOpen(false)}
         >
-          x
+          <CloseIcon sx={{height:"20px",width:"20px"}}/>
         </button>
         {filterConfigs.map((config) => (
           <li key={config.name}>
