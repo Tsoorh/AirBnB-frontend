@@ -145,6 +145,7 @@ export function StayFilter({ isOnViewPort, isStayDetails }) {
     ev.preventDefault();
     SetCurrentModalContent(null);
     setIsModalOpen(false);
+    setMobileFilterOpen(false);
 
     // Apply the filter (if setFilterBy is provided as prop)
     if (setFilter) {

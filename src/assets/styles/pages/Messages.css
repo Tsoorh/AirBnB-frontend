@@ -59,7 +59,7 @@
 
 .active-chat {
     background-color: rgba(199, 199, 199, 0.137);
-    border-left: 4px solid #FF385C;
+    border-left: 3px solid #FF385C;
 }
 
 .chat-with {
@@ -117,7 +117,7 @@
         display: none;
     }
 
-    .active {
+    .active-chat {
         border: 3px solid #FF385C;
     }
 
