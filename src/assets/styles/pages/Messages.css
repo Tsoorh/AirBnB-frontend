@@ -3,9 +3,10 @@
     grid-template-columns: 1fr 2fr;
     grid-template-rows: 4rem 2fr;
     height: 84vh;
-    margin-left: 2.3rem;
-    margin-right: 2.3rem;
+    margin: 0 auto;
+    padding: 0 2.3rem;
     overflow: hidden;
+    max-width: 2000px;
 }
 .chat-header {
     grid-area: 1/1/2/2;

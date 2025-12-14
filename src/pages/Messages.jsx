@@ -21,28 +21,7 @@ export function Messages() {
     async function loadChats() {
         const chats = await chatService.getChats({ userId: loggedInUser._id })
         console.log("🚀 ~ loadChats ~ chats:", chats)
-
-        const formattedChatPromises = chats.map(async (chat) => {
-            const participantDataPromises = chat.participants
-                .filter(pid => pid !== loggedInUser._id)
-                .map(async (pid) => {
-                    if(!pid) return null
-                    const user = await userService.getById(pid)
-                    return {
-                        fullname: user.fullname,
-                        imgUrl: user.imgUrl,
-                    }
-                })
-
-            const participantsData = await Promise.all(participantDataPromises)
-            return {
-                ...chat,
-                participantsData
-            }
-        })
-
-        const finalChats = await Promise.all(formattedChatPromises)
-        setChatList(finalChats)
+        setChatList(chats)
     }
 
     useEffect(()=>{
@@ -78,14 +57,20 @@ export function Messages() {
             </div>
             <div className="chat-sec">
                 <ul>
-                    {(!chatList) ? 'No chats to display' :
+                    {(!chatList || chatList.length === 0) ? 'No chats to display' :
                         chatList.map((chat, idx) => {
-                            if (!chat.lastMessage.text && chatId!==chat._id) return null
-                            return <li key={idx} className={`flex ${chatId===chat._id?'active-chat':''}`} onClick={() => onChooseChat(chat._id,chat?.participantsData[0]?.fullname)}>
-                                <img className="img-url" src={chat.participantsData[0]?.imgUrl} /> 
+                            // Safety checks
+                            if (!chat.participantsData || chat.participantsData.length === 0) {
+                                console.warn('Chat missing participantsData:', chat)
+                                return null
+                            }
+                            if (!chat.lastMessage?.text && chatId !== chat._id) return null
+
+                            return <li key={idx} className={`flex ${chatId===chat._id?'active-chat':''}`} onClick={() => onChooseChat(chat._id, chat.participantsData[0].fullname)}>
+                                <img className="img-url" src={chat.participantsData[0].imgUrl} alt={chat.participantsData[0].fullname} />
                                 <div className="flex column chat-info">
-                                    <span className="chat-with">{chat?.participantsData[0]?.fullname} </span>
-                                    <span className="last-message">{chat?.lastMessage?.text}</span>
+                                    <span className="chat-with">{chat.participantsData[0].fullname}</span>
+                                    <span className="last-message">{chat.lastMessage.text}</span>
                                 </div>
                             </li>
                         })

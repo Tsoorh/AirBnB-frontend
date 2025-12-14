@@ -30,6 +30,7 @@
         >input {
             flex-grow: 1;
             padding: 0.5rem;
+            margin-bottom: 20px;
             border-radius: 0.8rem;
             border: none;
             background-color: #d6d6d6;
@@ -44,6 +45,7 @@
             border-radius: var(--h-border-radius);
             padding: 0 0.8rem;
             background-color: #FF385C;
+            margin-bottom: 20px;
         }
 
         >button:hover {
