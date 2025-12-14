@@ -38,6 +38,7 @@ export function StaySearch(){
             <div className="results-stay-list">
                 <StayList
                     stays={stays}
+                    inSearchPage={true}
                 />
             </div>
 

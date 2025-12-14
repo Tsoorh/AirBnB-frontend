@@ -135,3 +135,76 @@
     color: #717171;
     font-size: 0.7rem;
 }
+
+/* Carousel Styles */
+.stay-image-container:hover .carousel-control {
+    opacity: 1;
+    visibility: visible;
+}
+
+.carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s, transform 0.1s;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #222;
+}
+
+.carousel-control:hover {
+    background-color: #fff;
+    transform: translateY(-50%) scale(1.04);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.carousel-control:active {
+    transform: translateY(-50%) scale(0.96);
+}
+
+.carousel-control.prev {
+    left: 10px;
+}
+
+.carousel-control.next {
+    right: 10px;
+}
+
+.carousel-dots {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 2;
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dot.active {
+    background-color: #fff;
+    transform: scale(1.1);
+}
+
+.dot:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+}
