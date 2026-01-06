@@ -6,7 +6,8 @@
 **Backend Repository:** https://github.com/Tsoorh/AirBnB-backend
 
 
-<img width="1128" height="783" alt="image" src="https://github.com/user-attachments/assets/941ecc54-241d-45c6-a55f-edcdae9c93c4" />
+<img width="1122" height="758" alt="image" src="https://github.com/user-attachments/assets/2bfc2c29-f4e0-46f4-93b2-929092875479" />
+
 
 
 
